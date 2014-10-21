@@ -3,9 +3,8 @@
 
 
     <div id="site-title">
-        <div align="center">
-            <h3><a href="#"><img src="<?php echo base_url()?>images/logo_combined.png" /></a></h3>
-        </div>
+    <?php $this->load->view('banner'); ?>
+       
 
     </div>
 
@@ -18,16 +17,16 @@
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
                         <li>
-                            <a href="<?php echo base_url('analytics'); ?>">Home</a>
+                            <a href="<?php echo base_url('mnch/analytics'); ?>">Home</a>
                         </li>
                         <li>
-                            <a href="<?php echo base_url('takesurvey'); ?>">Take Survey</a>
+                            <a href="<?php echo base_url('mnch/takesurvey'); ?>">Take Survey</a>
                         </li>
                         <li>
-                            <a href="<?php echo base_url('analytics'); ?>">View Analytics</a>
+                            <a href="<?php echo base_url('mnch/analytics'); ?>">View Analytics</a>
                         </li>
                         <li>
-                            <a href="<?php echo base_url('home'); ?>">Reporting Progress</a>
+                            <a href="<?php echo base_url('mnch/home'); ?>">Reporting Progress</a>
                         </li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Offline Forms <b class="caret"></b> </a>
