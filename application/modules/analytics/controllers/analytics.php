@@ -1242,15 +1242,11 @@ class Analytics extends MY_Controller
         }
         $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 130, 'column', (int)sizeof($category));
     }
-<<<<<<< HEAD
-    
-     public function getStorageStatistics($criteria, $value, $survey, $survey_category, $for) {
-        $results = $this->m_analytics->getStorageStatistics($criteria, $value, $survey, $survey_category, $for);
-=======
+
     }
     /* public function getStorageStatistics($criteria, $value, $survey, $survey_category, $for) {
         $results = $this->analytics_model->getStorageStatistics($criteria, $value, $survey, $survey_category, $for);
->>>>>>> 4979ff265224bc230f94555a1f2d1c9c34e21fa6
+
         
         //echo "<pre>"; print_r($results);echo "</pre>";die;
        
