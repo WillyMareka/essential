@@ -3220,7 +3220,7 @@ class Analytics extends MY_Controller
     public function getIndicatorCorrectnessRaw($criteria, $value, $survey, $survey_category, $for, $statistics, $form) {
         $results = $this->analytics_model->getIndicatorComparison($criteria, $value, $survey, $survey_category, $for, 'hcwcorrectness_raw');
         
-        //echo "<pre>";print_r($results);echo "</pre>";die;
+        // echo "<pre>";print_r($results);echo "</pre>";die;
         $results = $this->arrays->reset($results);
 
         echo $this->export->generate($results, 'Indicator Comparison for' . ucwords($for) . '(' . $value . ')', $form);
@@ -3232,7 +3232,7 @@ class Analytics extends MY_Controller
         //echo "<pre>";print_r($results);echo "</pre>";die;
         $results = $this->arrays->reset($results);
 
-        echo $this->export->generate($results, 'Indicator Comparison for' . ucwords($for) . '(' . $value . ')', $form);
+        echo $this->export->generate($results, 'Indicator Classification for' . ucwords($for) . '(' . $value . ')', $form);
     }
 
     public function getIndicatorAssessmentRaw($criteria, $value, $survey, $survey_category, $for, $statistics, $form) {
@@ -3241,7 +3241,7 @@ class Analytics extends MY_Controller
         //echo "<pre>";print_r($results);echo "</pre>";die;
         $results = $this->arrays->reset($results);
 
-        echo $this->export->generate($results, 'Indicator Comparison for' . ucwords($for) . '(' . $value . ')', $form);
+        echo $this->export->generate($results, 'Indicator Assessment for' . ucwords($for) . '(' . $value . ')', $form);
     }
     
     /**
@@ -3768,7 +3768,8 @@ class Analytics extends MY_Controller
             }
              //echo "<pre>"; print_r($resultArray);echo "</pre>";die;
             $colors = array('#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970', '#f28f43', '#77a1e5', '#c42525', '#dddddd');
-            $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 70, 'bar', (int)sizeof($category), '', '', '', $colors);
+            $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 70, 'bar', '', $for, 'findings', $statistics, $colors);
+            
         } elseif (($statistic == 'hcwservice' && $for == 'svc') || ($statistic == 'hcwservice' && $for == 'sgn')) {
             $results = $this->analytics_model->getIndicatorStatistics($criteria, $value, '', '', $for, $statistic);
             
@@ -3878,6 +3879,15 @@ class Analytics extends MY_Controller
         echo $this->export->generate($results, 'Indicator Statistics for' . ucwords($for) . '(' . $value . ')', $form);
     }
 
+    public function getIndicatorFindingsRaw($criteria, $value, $survey, $survey_category, $for, $statistics, $form) {
+        $results = $this->analytics_model->getIndicatorStatistics($criteria, $value, $survey, $survey_category, $for, 'hcwfindings_raw');
+        
+        // echo "<pre>";print_r($results);echo "</pre>";die;
+        $results = $this->arrays->reset($results);
+
+        echo $this->export->generate($results, 'Indicator Finidngs for' . ucwords($for) . '(' . $value . ')', $form);
+    }
+
     public function getHcwServicesOffered($criteria, $value, $survey, $survey_category, $for, $statistic) {
         $this->getIndicatorStatistics($criteria, $value, '', '', 'svc', 'hcwservice');
     }
@@ -3966,7 +3976,7 @@ class Analytics extends MY_Controller
             }
             
             //echo '<pre>';print_r($resultArray);echo '</pre>';die;
-            $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 70, 'bar', '', $for, 'classification', $statistics, $colors);
+            $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 70, 'bar', '', $for, 'classification', $statistics, $color);
             //$this->populateGraph($resultArray, '', $category, $criteria, 'percent', 130, 'bar');
         } elseif ($statistic == 'correctness') {
             
@@ -4017,7 +4027,7 @@ class Analytics extends MY_Controller
             }
             
             // echo '<pre>';print_r($resultArray);echo '</pre>';die;
-            $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 70, 'bar', '', $for, 'correctness', $statistics, $colors);
+            $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 70, 'bar', '', $for, 'correctness', $statistic, $color);
             //$this->populateGraph($resultArray, '', $category, $criteria, 'percent', 130, 'bar');
         }
     }
@@ -4048,7 +4058,7 @@ class Analytics extends MY_Controller
         //echo '<pre>';print_r($resultArray);echo '</pre>';die;
         
         //$this->populateGraph($resultArray, '', $category, $criteria, 'percent', 130, 'bar');
-        $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 70, 'bar', '', $for, 'assessment', $statistics, $colors);
+        $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 70, 'bar', '', $for, 'assessment', $statistics, $color);
         }else{
         $results = $this->analytics_model->getIndicatorComparison($criteria, $value, $survey, $survey_category, $for, $statistic);
         foreach ($results as $indicator => $values) {
@@ -4072,8 +4082,8 @@ class Analytics extends MY_Controller
         }
         
         //echo '<pre>';print_r($resultArray);echo '</pre>';die;
-        
-        $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 130, 'bar');
+        $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 70, 'bar', '', $for, 'assessment', $statistics, $color);
+        //$this->populateGraph($resultArray, '', $category, $criteria, 'percent', 130, 'bar');
        }
     }
     

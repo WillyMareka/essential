@@ -1156,7 +1156,10 @@ function setRawUrl(criteria, county, district, facility, survey,
         raw_url = 'analytics/getIndicatorRaw/' + criteria + '/' + value + '/' +
           survey + '/' + survey_category + '/' + data_for;
         break;
-
+      case 'findings':
+        raw_url = 'analytics/getIndicatorFindingsRaw/' + criteria + '/' + value + '/' +
+          survey + '/' + survey_category + '/' + data_for  + '/' + statistic;
+        break;
       case 'commodity':
         raw_url = 'analytics/getCommodityRaw/' + criteria + '/' + value + '/' +
           survey + '/' + survey_category + '/' + data_for + '/' + statistic;

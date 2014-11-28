@@ -1285,15 +1285,16 @@ WHERE
                                 break;
 
                             case 'hcwcorrectness_raw':
-                                $data[] = $value_;
+                                $data[] = $value;
                                 break;
 
                             case 'hcwclassification_raw':
-                                $data[] = $value_;
+                                $data[] = $value;
                                 break;
 
                             case 'hcwassessment_raw':
-                                $data[] = $value_;
+                                $data[] = $value;
+                                //echo '<pre>';print_r($this->dataSet);echo '</pre>';die;
                                 break;
                         }
                     }
