@@ -1,6 +1,434 @@
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DELIMITER $$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_question_statistics`(criteria VARCHAR(45), analytic_value VARCHAR(45), survey_type VARCHAR(45), survey_category VARCHAR(45), questionfor VARCHAR(45), statistics VARCHAR(45))
 BEGIN
 CASE statistics
+WHEN 'functionality_raw' THEN
+CASE criteria
+WHEN 'national' THEN
+
+SELECT 
+    f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    q.question_name,
+    (CASE (q.question_code = 'QUC28'
+        || q.question_code = 'QUC27')
+        WHEN lq.lq_response = 'Yes' THEN 'functional'
+        ELSE 'nonfunctional'
+    END) AS response
+FROM
+    log_questions lq
+        JOIN
+    questions q ON (q.question_code = lq.question_code
+        AND q.question_for = questionfor)
+        JOIN
+    facilities f ON f.fac_mfl = lq.fac_mfl
+        JOIN
+    survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN
+    survey_types st ON (ss.st_id = st.st_id
+        AND st.st_name = survey_type)
+        JOIN
+    survey_categories sc ON (ss.sc_id = sc.sc_id
+        AND sc.sc_name = survey_category)
+WHERE
+    q.question_code = 'QUC27'
+        || q.question_code = 'QUC28'
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+WHEN 'county' THEN
+
+SELECT 
+    f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    q.question_name,
+    (CASE (q.question_code = 'QUC28'
+        || q.question_code = 'QUC27')
+        WHEN lq.lq_response = 'Yes' THEN 'functional'
+        ELSE 'nonfunctional'
+    END) AS response
+FROM
+    log_questions lq
+        JOIN
+    questions q ON (q.question_code = lq.question_code
+        AND q.question_for = questionfor)
+        JOIN
+    facilities f ON f.fac_mfl = lq.fac_mfl AND fac_county = analytic_value
+        JOIN
+    survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN
+    survey_types st ON (ss.st_id = st.st_id
+        AND st.st_name = survey_type)
+        JOIN
+    survey_categories sc ON (ss.sc_id = sc.sc_id
+        AND sc.sc_name = survey_category)
+WHERE
+    q.question_code = 'QUC27'
+        || q.question_code = 'QUC28'
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+WHEN 'district' THEN
+
+SELECT 
+    f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    q.question_name,
+    (CASE (q.question_code = 'QUC28'
+        || q.question_code = 'QUC27')
+        WHEN lq.lq_response = 'Yes' THEN 'functional'
+        ELSE 'nonfunctional'
+    END) AS response
+FROM
+    log_questions lq
+        JOIN
+    questions q ON (q.question_code = lq.question_code
+        AND q.question_for = questionfor)
+        JOIN
+    facilities f ON f.fac_mfl = lq.fac_mfl AND fac_district = analytic_value
+        JOIN
+    survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN
+    survey_types st ON (ss.st_id = st.st_id
+        AND st.st_name = survey_type)
+        JOIN
+    survey_categories sc ON (ss.sc_id = sc.sc_id
+        AND sc.sc_name = survey_category)
+WHERE
+    q.question_code = 'QUC27'
+        || q.question_code = 'QUC28'
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+WHEN 'facility' THEN
+
+SELECT 
+    f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    q.question_name,
+    (CASE (q.question_code = 'QUC28'
+        || q.question_code = 'QUC27')
+        WHEN lq.lq_response = 'Yes' THEN 'functional'
+        ELSE 'nonfunctional'
+    END) AS response
+FROM
+    log_questions lq
+        JOIN
+    questions q ON (q.question_code = lq.question_code
+        AND q.question_for = questionfor)
+        JOIN
+    facilities f ON f.fac_mfl = lq.fac_mfl AND fac_mfl = analytic_value
+        JOIN
+    survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN
+    survey_types st ON (ss.st_id = st.st_id
+        AND st.st_name = survey_type)
+        JOIN
+    survey_categories sc ON (ss.sc_id = sc.sc_id
+        AND sc.sc_name = survey_category)
+WHERE
+    q.question_code = 'QUC27'
+        || q.question_code = 'QUC28'
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+END CASE;
+
+WHEN 'location_raw' THEN
+CASE criteria
+WHEN 'national' THEN
+
+SELECT 
+    f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    q.question_name,
+    lq.lq_response
+FROM
+    log_questions lq
+        JOIN
+    questions q ON lq.question_code = q.question_code
+        AND q.question_for = questionfor
+        JOIN
+    facilities f ON f.fac_mfl = lq.fac_mfl
+        JOIN
+    survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN
+    survey_types st ON (ss.st_id = st.st_id
+        AND st.st_name = survey_type)
+        JOIN
+    survey_categories sc ON (ss.sc_id = sc.sc_id
+        AND sc.sc_name = survey_category)
+WHERE
+    q.question_code = 'QUC02b'
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+WHEN 'county' THEN
+
+SELECT 
+    f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    q.question_name,
+    lq.lq_response
+FROM
+    log_questions lq
+        JOIN
+    questions q ON lq.question_code = q.question_code
+        AND q.question_for = questionfor
+        JOIN
+    facilities f ON f.fac_mfl = lq.fac_mfl AND fac_county = analytic_value
+        JOIN
+    survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN
+    survey_types st ON (ss.st_id = st.st_id
+        AND st.st_name = survey_type)
+        JOIN
+    survey_categories sc ON (ss.sc_id = sc.sc_id
+        AND sc.sc_name = survey_category)
+WHERE
+    q.question_code = 'QUC02b'
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+WHEN 'district' THEN
+
+SELECT 
+    f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    q.question_name,
+    lq.lq_response
+FROM
+    log_questions lq
+        JOIN
+    questions q ON lq.question_code = q.question_code
+        AND q.question_for = questionfor
+        JOIN
+    facilities f ON f.fac_mfl = lq.fac_mfl AND fac_district = analytic_value
+        JOIN
+    survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN
+    survey_types st ON (ss.st_id = st.st_id
+        AND st.st_name = survey_type)
+        JOIN
+    survey_categories sc ON (ss.sc_id = sc.sc_id
+        AND sc.sc_name = survey_category)
+WHERE
+    q.question_code = 'QUC02b'
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+WHEN 'facility' THEN
+
+SELECT 
+    f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    q.question_name,
+    lq.lq_response
+FROM
+    log_questions lq
+        JOIN
+    questions q ON lq.question_code = q.question_code
+        AND q.question_for = questionfor
+        JOIN
+    facilities f ON f.fac_mfl = lq.fac_mfl AND fac_mfl = analytic_value
+        JOIN
+    survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN
+    survey_types st ON (ss.st_id = st.st_id
+        AND st.st_name = survey_type)
+        JOIN
+    survey_categories sc ON (ss.sc_id = sc.sc_id
+        AND sc.sc_name = survey_category)
+WHERE
+    q.question_code = 'QUC02b'
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+END CASE;
+WHEN 'availability_raw' THEN
+CASE criteria
+WHEN 'national'THEN
+
+SELECT 
+    f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    q.question_name,
+    (CASE
+        WHEN lq.lq_response = 'Yes' THEN 'Available'
+        WHEN lq.lq_response = 'No' THEN 'Not Available'
+        WHEN
+            (lq.lq_response = ''
+                || lq.lq_response = 'n/a')
+        THEN
+            'No data'
+    END) AS response
+FROM
+    log_questions lq
+        JOIN
+    questions q ON (lq.question_code = q.question_code
+        AND q.question_for = questionfor)
+        JOIN
+    facilities f ON f.fac_mfl = lq.fac_mfl
+        JOIN
+    survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN
+    survey_types st ON (ss.st_id = st.st_id
+        AND st.st_name = survey_type)
+        JOIN
+    survey_categories sc ON (ss.sc_id = sc.sc_id
+        AND sc.sc_name = survey_category)
+WHERE
+    q.question_code = 'QUC01'
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+WHEN 'county' THEN
+
+SELECT 
+    f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    q.question_name,
+    (CASE
+        WHEN lq.lq_response = 'Yes' THEN 'Available'
+        WHEN lq.lq_response = 'No' THEN 'Not Available'
+        WHEN
+            (lq.lq_response = ''
+                || lq.lq_response = 'n/a')
+        THEN
+            'No data'
+    END) AS response
+FROM
+    log_questions lq
+        JOIN
+    questions q ON (lq.question_code = q.question_code
+        AND q.question_for = questionfor)
+        JOIN
+    facilities f ON f.fac_mfl = lq.fac_mfl AND fac_county = analytic_value
+        JOIN
+    survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN
+    survey_types st ON (ss.st_id = st.st_id
+        AND st.st_name = survey_type)
+        JOIN
+    survey_categories sc ON (ss.sc_id = sc.sc_id
+        AND sc.sc_name = survey_category)
+WHERE
+    q.question_code = 'QUC01'
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+WHEN 'district' THEN
+
+SELECT 
+    f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    q.question_name,
+    (CASE
+        WHEN lq.lq_response = 'Yes' THEN 'Available'
+        WHEN lq.lq_response = 'No' THEN 'Not Available'
+        WHEN
+            (lq.lq_response = ''
+                || lq.lq_response = 'n/a')
+        THEN
+            'No data'
+    END) AS response
+FROM
+    log_questions lq
+        JOIN
+    questions q ON (lq.question_code = q.question_code
+        AND q.question_for = questionfor)
+        JOIN
+    facilities f ON f.fac_mfl = lq.fac_mfl AND fac_district = analytic_value
+        JOIN
+    survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN
+    survey_types st ON (ss.st_id = st.st_id
+        AND st.st_name = survey_type)
+        JOIN
+    survey_categories sc ON (ss.sc_id = sc.sc_id
+        AND sc.sc_name = survey_category)
+WHERE
+    q.question_code = 'QUC01'
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+WHEN 'facility' THEN
+
+SELECT 
+    f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    q.question_name,
+    (CASE
+        WHEN lq.lq_response = 'Yes' THEN 'Available'
+        WHEN lq.lq_response = 'No' THEN 'Not Available'
+        WHEN
+            (lq.lq_response = ''
+                || lq.lq_response = 'n/a')
+        THEN
+            'No data'
+    END) AS response
+FROM
+    log_questions lq
+        JOIN
+    questions q ON (lq.question_code = q.question_code
+        AND q.question_for = questionfor)
+        JOIN
+    facilities f ON f.fac_mfl = lq.fac_mfl AND fac_mfl = analytic_value
+        JOIN
+    survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN
+    survey_types st ON (ss.st_id = st.st_id
+        AND st.st_name = survey_type)
+        JOIN
+    survey_categories sc ON (ss.sc_id = sc.sc_id
+        AND sc.sc_name = survey_category)
+WHERE
+    q.question_code = 'QUC01'
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+END CASE;
+
 WHEN 'response_raw' THEN
 
 CASE criteria
@@ -332,116 +760,116 @@ CASE criteria
 WHEN 'national' THEN
 SELECT 
      q.question_code,
-    count(f.fac_mfl) as total_response,
-	lq_response as response,
-	(CASE WHEN (lq.lq_response = '' || lq.lq_response = 'n/a' 
+    count(DISTINCT(f.fac_mfl)) as total_response,
+    lq_response as response,
+    (CASE WHEN (lq.lq_response = '' || lq.lq_response = 'n/a' 
     || lq.lq_response IS NULL) THEN 'No data' 
-			WHEN lq.lq_response = 'Yes' THEN 'Yes' 
-			WHEN lq.lq_response = 'No' THEN 'No' END) as response
+            WHEN lq.lq_response = 'Yes' THEN 'Yes' 
+            WHEN lq.lq_response = 'No' THEN 'No' END) as response
 FROM
     log_questions lq
-		JOIN
+        JOIN
             questions q ON (lq.question_code = q.question_code
-		AND q.question_for = questionfor)
+        AND q.question_for = questionfor)
         JOIN
             facilities f  ON f.fac_mfl = lq.fac_mfl JOIN
     survey_status ss ON ss.fac_id = f.fac_mfl
-		JOIN
-	survey_categories sc ON (sc.sc_id = ss.sc_id AND sc.sc_name = survey_category)
+        JOIN
+    survey_categories sc ON (sc.sc_id = ss.sc_id AND sc.sc_name = survey_category)
         JOIN
     survey_types st ON (st.st_id = ss.st_id
         AND st.st_name = survey_type)
 GROUP BY lq.question_code, response
-ORDER BY lq.question_code,count(distinct f.fac_mfl);
+ORDER BY lq.question_code,count(DISTINCT f.fac_mfl);
 
 WHEN 'county' THEN
 SELECT 
      q.question_code,
-    count(f.fac_mfl) as total_response,
-	lq_response as response,
-	(CASE WHEN (lq.lq_response = '' || lq.lq_response = 'n/a'
+    count(DISTINCT(f.fac_mfl)) as total_response,
+    lq_response as response,
+    (CASE WHEN (lq.lq_response = '' || lq.lq_response = 'n/a'
     || lq.lq_response IS NULL) THEN 'No data' 
-			WHEN lq.lq_response = 'Yes' THEN 'Yes' 
-			WHEN lq.lq_response = 'No' THEN 'No' END) as response
+            WHEN lq.lq_response = 'Yes' THEN 'Yes' 
+            WHEN lq.lq_response = 'No' THEN 'No' END) as response
 
 FROM
     log_questions lq
-		JOIN
+        JOIN
             questions q ON (lq.question_code = q.question_code
-		AND q.question_for = questionfor)
+        AND q.question_for = questionfor)
         JOIN
             facilities f  ON f.fac_mfl = lq.fac_mfl JOIN
     survey_status ss ON ss.fac_id = f.fac_mfl
-		JOIN
-	survey_categories sc ON (sc.sc_id = ss.sc_id AND sc.sc_name = survey_category)
+        JOIN
+    survey_categories sc ON (sc.sc_id = ss.sc_id AND sc.sc_name = survey_category)
         JOIN
     survey_types st ON (st.st_id = ss.st_id
         AND st.st_name = survey_type)
-	WHERE f.fac_county = analytic_value
+    WHERE f.fac_county = analytic_value
 GROUP BY lq.question_code, response
-ORDER BY lq.question_code,count(distinct f.fac_mfl);
+ORDER BY lq.question_code,count(DISTINCT f.fac_mfl);
 
 WHEN 'district' THEN
 SELECT 
      q.question_code,
-    count(f.fac_mfl) as total_response,
-	lq_response as response,
-	(CASE WHEN (lq.lq_response = '' || lq.lq_response = 'n/a'
+    count(DISTINCT(f.fac_mfl)) as total_response,
+    lq_response as response,
+    (CASE WHEN (lq.lq_response = '' || lq.lq_response = 'n/a'
     || lq.lq_response IS NULL) THEN 'No data' 
-			WHEN lq.lq_response = 'Yes' THEN 'Yes' 
-			WHEN lq.lq_response = 'No' THEN 'No' END) as response
+            WHEN lq.lq_response = 'Yes' THEN 'Yes' 
+            WHEN lq.lq_response = 'No' THEN 'No' END) as response
 FROM
     log_questions lq
-		JOIN
+        JOIN
             questions q ON (lq.question_code = q.question_code
-		AND q.question_for = questionfor)
+        AND q.question_for = questionfor)
         JOIN
             facilities f  ON f.fac_mfl = lq.fac_mfl JOIN
     survey_status ss ON ss.fac_id = f.fac_mfl
-		JOIN
-	survey_categories sc ON (sc.sc_id = ss.sc_id AND sc.sc_name = survey_category)
+        JOIN
+    survey_categories sc ON (sc.sc_id = ss.sc_id AND sc.sc_name = survey_category)
         JOIN
     survey_types st ON (st.st_id = ss.st_id
         AND st.st_name = survey_type)
-	WHERE f.fac_district = analytic_value
+    WHERE f.fac_district = analytic_value
 GROUP BY lq.question_code, response
-ORDER BY lq.question_code,count(distinct f.fac_mfl);
+ORDER BY lq.question_code,count(DISTINCT f.fac_mfl);
 
 WHEN 'facility' THEN
 SELECT 
      q.question_code,
-    count(lq_response) as total_response,
-	lq_response as response,
+    count(distinct f.fac_mfl) as total_response,
+    lq_response as response,
 (CASE WHEN (lq.lq_response = '' || lq.lq_response = 'n/a'
 || lq.lq_response IS NULL ) THEN 'No data' 
-			WHEN lq.lq_response = 'Yes' THEN 'Yes' 
-			WHEN lq.lq_response = 'No' THEN 'No' END) as response
+            WHEN lq.lq_response = 'Yes' THEN 'Yes' 
+            WHEN lq.lq_response = 'No' THEN 'No' END) as response
 FROM
     log_questions lq
-		JOIN
+        JOIN
             questions q ON (lq.question_code = q.question_code
-		AND q.question_for = questionfor)
+        AND q.question_for = questionfor)
         JOIN
             facilities f  ON f.fac_mfl = lq.fac_mfl JOIN
     survey_status ss ON ss.fac_id = f.fac_mfl
-		JOIN
-	survey_categories sc ON (sc.sc_id = ss.sc_id AND sc.sc_name = survey_category)
+        JOIN
+    survey_categories sc ON (sc.sc_id = ss.sc_id AND sc.sc_name = survey_category)
         JOIN
     survey_types st ON (st.st_id = ss.st_id
         AND st.st_name = survey_type)
-	WHERE f.fac_mfl = analytic_value
+    WHERE f.fac_mfl = analytic_value
 GROUP BY lq.question_code, response
-ORDER BY lq.question_code,count(distinct f.fac_mfl);
+ORDER BY lq.question_code,count(DISTINCT f.fac_mfl);
 END CASE;
 
 WHEN 'reason' THEN
 CASE criteria
 WHEN 'national' THEN
 SELECT 
-    COUNT(f.fac_mfl) AS total_response,lq.lq_reason, lq.question_code AS questions,
+    COUNT(DISTINCT(f.fac_mfl)) AS total_response,lq.lq_reason, lq.question_code AS questions,
 (CASE
         WHEN lq.lq_reason Like 'Blood not available%' THEN 'Blood not available' 
-		WHEN lq.lq_reason Like 'Supplies and equipment not available%' THEN 'Supplies and equipment not available' 
+        WHEN lq.lq_reason Like 'Supplies and equipment not available%' THEN 'Supplies and equipment not available' 
         WHEN lq.lq_reason Like 'Theatre space not available%' THEN 'Theatre space not available'
         WHEN lq.lq_reason Like 'Human Resource not available%' THEN 'Human Resource not available'
         WHEN (lq.lq_reason = '' || lq.lq_reason = 'N/A') THEN 'No data'
@@ -449,25 +877,25 @@ SELECT
     END) as reason
 FROM
     log_questions lq
-		JOIN
-		facilities f ON f.fac_mfl = lq.fac_mfl
+        JOIN
+        facilities f ON f.fac_mfl = lq.fac_mfl
         JOIN
     questions q ON lq.question_code = q.question_code AND q.question_for = questionfor
-		JOIN 
-	survey_status ss ON ss.fac_id = lq.fac_mfl
-		JOIN 
-	survey_types st ON st.st_id = ss.st_id AND st.st_name = survey_type
-		JOIN 
-	survey_categories sc ON sc.sc_id = ss.sc_id AND sc.sc_name = survey_category 
+        JOIN 
+    survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN 
+    survey_types st ON st.st_id = ss.st_id AND st.st_name = survey_type
+        JOIN 
+    survey_categories sc ON sc.sc_id = ss.sc_id AND sc.sc_name = survey_category 
 GROUP BY lq.lq_reason
 ORDER BY questions;
 
 WHEN 'county' THEN
 SELECT 
-    COUNT(f.fac_mfl) AS total_response,lq.lq_reason, lq.question_code AS questions,
+    COUNT(DISTINCT(f.fac_mfl)) AS total_response,lq.lq_reason, lq.question_code AS questions,
 (CASE
         WHEN lq.lq_reason Like 'Blood not available%' THEN 'Blood not available' 
-		WHEN lq.lq_reason Like 'Supplies and equipment not available%' THEN 'Supplies and equipment not available' 
+        WHEN lq.lq_reason Like 'Supplies and equipment not available%' THEN 'Supplies and equipment not available' 
         WHEN lq.lq_reason Like 'Theatre space not available%' THEN 'Theatre space not available'
         WHEN lq.lq_reason Like 'Human Resource not available%' THEN 'Human Resource not available'
         WHEN (lq.lq_reason = '' || lq.lq_reason = 'N/A') THEN 'No data'
@@ -475,26 +903,26 @@ SELECT
     END) as reason
 FROM
     log_questions lq
-		JOIN 
-	facilities f ON f.fac_mfl = lq.fac_mfl 
+        JOIN 
+    facilities f ON f.fac_mfl = lq.fac_mfl 
         JOIN
     questions q ON lq.question_code = q.question_code AND q.question_for = questionfor
-		JOIN 
-	survey_status ss ON ss.fac_id = lq.fac_mfl
-		JOIN 
-	survey_types st ON st.st_id = ss.st_id AND st.st_name = survey_type 
-		JOIN 
-	survey_categories sc ON sc.sc_id = ss.sc_id AND sc.sc_name = survey_category
+        JOIN 
+    survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN 
+    survey_types st ON st.st_id = ss.st_id AND st.st_name = survey_type 
+        JOIN 
+    survey_categories sc ON sc.sc_id = ss.sc_id AND sc.sc_name = survey_category
 WHERE
    fac_county = analytic_value
 GROUP BY lq.lq_reason
 ORDER BY questions;
 WHEN 'district' THEN
 SELECT 
-    COUNT(f.fac_mfl) AS total_response,lq.lq_reason, lq.question_code AS questions,
+    COUNT(DISTINCT(f.fac_mfl)) AS total_response,lq.lq_reason, lq.question_code AS questions,
 (CASE
         WHEN lq.lq_reason Like 'Blood not available%' THEN 'Blood not available' 
-		WHEN lq.lq_reason Like 'Supplies and equipment not available%' THEN 'Supplies and equipment not available' 
+        WHEN lq.lq_reason Like 'Supplies and equipment not available%' THEN 'Supplies and equipment not available' 
         WHEN lq.lq_reason Like 'Theatre space not available%' THEN 'Theatre space not available'
         WHEN lq.lq_reason Like 'Human Resource not available%' THEN 'Human Resource not available'
         WHEN (lq.lq_reason = '' || lq.lq_reason = 'N/A') THEN 'No data'
@@ -502,34 +930,34 @@ SELECT
     END) as reason
 FROM
     log_questions lq
-		JOIN 
-	facilities f ON f.fac_mfl = lq.fac_mfl 
+        JOIN 
+    facilities f ON f.fac_mfl = lq.fac_mfl 
         JOIN
     questions q ON lq.question_code = q.question_code AND q.question_for = questionfor
-		JOIN 
-	survey_status ss ON ss.fac_id = lq.fac_mfl
-		JOIN 
-	survey_types st ON st.st_id = ss.st_id AND st.st_name = survey_type AND fac_district = analytic_value
-		JOIN 
-	survey_categories sc ON sc.sc_id = ss.sc_id AND sc.sc_name = survey_category
+        JOIN 
+    survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN 
+    survey_types st ON st.st_id = ss.st_id AND st.st_name = survey_type AND fac_district = analytic_value
+        JOIN 
+    survey_categories sc ON sc.sc_id = ss.sc_id AND sc.sc_name = survey_category
 WHERE
     fac_district = analytic_value
 GROUP BY lq.lq_reason;
 WHEN 'facility' THEN
 SELECT 
-    COUNT(lq.lq_reason) AS total_response,lq.lq_reason AS reason, lq.question_code AS questions
+    COUNT(distinct f.fac_mfl) AS total_response,lq.lq_reason AS reason, lq.question_code AS questions
 FROM
     log_questions lq
-		JOIN 
-	facilities f ON f.fac_mfl = lq.fac_mfl 
+        JOIN 
+    facilities f ON f.fac_mfl = lq.fac_mfl 
         JOIN
     questions q ON lq.question_code = q.question_code AND q.question_for = questionfor
-		JOIN 
-	survey_status ss ON ss.fac_id = lq.fac_mfl
-		JOIN 
-	survey_types st ON st.st_id = ss.st_id AND st.st_name = survey_type AND fac_mfl = analytic_value
-		JOIN 
-	survey_categories sc ON sc.sc_id = ss.sc_id AND sc.sc_name = survey_category
+        JOIN 
+    survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN 
+    survey_types st ON st.st_id = ss.st_id AND st.st_name = survey_type AND fac_mfl = analytic_value
+        JOIN 
+    survey_categories sc ON sc.sc_id = ss.sc_id AND sc.sc_name = survey_category
 WHERE
     f.fac_mfl = analytic_value
 GROUP BY lq.lq_reason
@@ -540,7 +968,7 @@ WHEN 'storage' THEN
 CASE criteria
 WHEN 'national' THEN
 SELECT 
-    count(lq.lq_specified_or_follow_up) AS total_response,
+    count(distinct f.fac_mfl) AS total_response,
     lq.lq_specified_or_follow_up
 FROM
     log_questions lq JOIN questions q ON lq.question_code = q.question_code  AND q.question_for = questionfor
@@ -560,7 +988,7 @@ GROUP BY lq.lq_specified_or_follow_up;
 
 WHEN 'county' THEN
 SELECT 
-    count(lq.lq_specified_or_follow_up) AS total_response,
+    count(distinct f.fac_mfl) AS total_response,
     lq.lq_specified_or_follow_up
 FROM
     log_questions lq JOIN questions q ON lq.question_code = q.question_code AND q.question_for = questionfor
@@ -573,14 +1001,12 @@ FROM
     survey_categories sc ON sc.sc_id = ss.sc_id
         AND sc.sc_name = survey_category
 WHERE
-    lq.lq_specified_or_follow_up != ''
-        && lq.lq_specified_or_follow_up != 'n/a'
-        AND fac_county = analytic_value AND lq.question_code = 'qmnh02'
+     fac_county = analytic_value AND lq.question_code = 'qmnh02'
 GROUP BY lq.lq_specified_or_follow_up;
 
 WHEN 'district' THEN
 SELECT 
-    count(lq.lq_specified_or_follow_up) AS total_response,
+    count(distinct f.fac_mfl) AS total_response,
     lq.lq_specified_or_follow_up
 FROM
     log_questions lq JOIN questions q ON lq.question_code = q.question_code AND q.question_for = questionfor
@@ -593,14 +1019,12 @@ FROM
     survey_categories sc ON sc.sc_id = ss.sc_id
         AND sc.sc_name = survey_category
 WHERE
-    lq.lq_specified_or_follow_up != ''
-        && lq.lq_specified_or_follow_up != 'n/a'
-       AND fac_district = analytic_value AND lq.question_code = 'qmnh02'
+     fac_district = analytic_value AND lq.question_code = 'qmnh02'
 GROUP BY lq.lq_specified_or_follow_up;
 
 WHEN 'facility' THEN
 SELECT 
-    count(lq.lq_specified_or_follow_up) AS total_response,
+    count(distinct f.fac_mfl) AS total_response,
     lq.lq_specified_or_follow_up
 FROM
     log_questions lq JOIN questions q ON lq.question_code = q.question_code AND q.question_for = questionfor
@@ -613,9 +1037,7 @@ FROM
     survey_categories sc ON sc.sc_id = ss.sc_id
         AND sc.sc_name = survey_category
 WHERE
-    lq.lq_specified_or_follow_up != ''
-        && lq.lq_specified_or_follow_up != 'n/a'
-		AND fac_mfl = analytic_value AND lq.question_code = 'qmnh02'
+     fac_mfl = analytic_value AND lq.question_code = 'qmnh02'
 GROUP BY lq.lq_specified_or_follow_up;
 END CASE;
 
@@ -712,8 +1134,8 @@ WHEN 'national' THEN
 SELECT 
     lq.question_code,
     q.question_name,
-	lq.lq_response as response,
-    COUNT(lq.lq_response) as total_response
+    lq.lq_response as response,
+    COUNT(distinct f.fac_mfl) as total_response
 FROM
     log_questions lq
         JOIN
@@ -736,8 +1158,8 @@ WHEN 'county' THEN
 SELECT 
     lq.question_code,
     q.question_name,
-	lq.lq_response as response,
-    COUNT(lq.lq_response) as total_response
+    lq.lq_response as response,
+    COUNT(distinct f.fac_mfl) as total_response
 FROM
     log_questions lq
         JOIN
@@ -761,8 +1183,8 @@ WHEN 'district' THEN
 SELECT 
     lq.question_code,
     q.question_name,
-	lq.lq_response as response,
-    COUNT(lq.lq_response) as total_response
+    lq.lq_response as response,
+    COUNT(distinct f.fac_mfl) as total_response
 FROM
     log_questions lq
         JOIN
@@ -786,8 +1208,8 @@ WHEN 'facility' THEN
 SELECT 
     lq.question_code,
     q.question_name,
-	lq.lq_response as response,
-    COUNT(lq.lq_response) as total_response
+    lq.lq_response as response,
+    COUNT(distinct f.fac_mfl) as total_response
 FROM
     log_questions lq
         JOIN
@@ -817,18 +1239,18 @@ SELECT
     lq.question_code,
     (case
         when lq.lq_specified_or_follow_up like 'blood bank available%' THEN 'blood bank available'
-		when lq.lq_specified_or_follow_up like 'transfusion done%' THEN 'transfusion done'
-		when lq.lq_specified_or_follow_up = 'n/a' THEN 'Not Applicable'
+        when lq.lq_specified_or_follow_up like 'transfusion done%' THEN 'transfusion done'
+        when lq.lq_specified_or_follow_up = 'n/a' THEN 'Not Applicable'
     end) as reason
 FROM
     log_questions lq
         JOIN
     questions q ON lq.question_code = q.question_code
         AND q.question_for = questionfor
-		JOIN facilities f ON f.fac_mfl = lq.fac_mfl
-		JOIN survey_status ss ON ss.fac_id = lq.fac_mfl
-		JOIN survey_categories sc ON ss.sc_id = ss.sc_id AND sc.sc_name = survey_category
-		JOIN survey_types st ON ss.st_id = ss.st_id AND st.st_name = survey_type
+        JOIN facilities f ON f.fac_mfl = lq.fac_mfl
+        JOIN survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN survey_categories sc ON ss.sc_id = ss.sc_id AND sc.sc_name = survey_category
+        JOIN survey_types st ON ss.st_id = ss.st_id AND st.st_name = survey_type
 WHERE
     lq.lq_specified_or_follow_up != ''
 group by lq.lq_specified_or_follow_up;
@@ -840,18 +1262,18 @@ SELECT
     lq.question_code,
     (case
         when lq.lq_specified_or_follow_up like 'blood bank available%' THEN 'blood bank available'
-		when lq.lq_specified_or_follow_up like 'transfusion done%' THEN 'transfusion done'
-		when lq.lq_specified_or_follow_up = 'n/a' THEN 'Not Applicable'
+        when lq.lq_specified_or_follow_up like 'transfusion done%' THEN 'transfusion done'
+        when lq.lq_specified_or_follow_up = 'n/a' THEN 'Not Applicable'
     end) as reason
 FROM
     log_questions lq
         JOIN
     questions q ON lq.question_code = q.question_code
         AND q.question_for = questionfor
-		JOIN facilities f ON f.fac_mfl = lq.fac_mfl
-		JOIN survey_status ss ON ss.fac_id = lq.fac_mfl
-		JOIN survey_categories sc ON ss.sc_id = ss.sc_id AND sc.sc_name = survey_category
-		JOIN survey_types st ON ss.st_id = ss.st_id AND st.st_name = survey_type
+        JOIN facilities f ON f.fac_mfl = lq.fac_mfl
+        JOIN survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN survey_categories sc ON ss.sc_id = ss.sc_id AND sc.sc_name = survey_category
+        JOIN survey_types st ON ss.st_id = ss.st_id AND st.st_name = survey_type
 WHERE
     lq.lq_specified_or_follow_up != ''
 AND f.fac_county = analytic_value
@@ -864,18 +1286,18 @@ SELECT
     lq.question_code,
     (case
         when lq.lq_specified_or_follow_up like 'blood bank available%' THEN 'blood bank available'
-		when lq.lq_specified_or_follow_up like 'transfusion done%' THEN 'transfusion done'
-		when lq.lq_specified_or_follow_up = 'n/a' THEN 'Not Applicable'
+        when lq.lq_specified_or_follow_up like 'transfusion done%' THEN 'transfusion done'
+        when lq.lq_specified_or_follow_up = 'n/a' THEN 'Not Applicable'
     end) as reason
 FROM
     log_questions lq
         JOIN
     questions q ON lq.question_code = q.question_code
         AND q.question_for = questionfor
-		JOIN facilities f ON f.fac_mfl = lq.fac_mfl
-		JOIN survey_status ss ON ss.fac_id = lq.fac_mfl
-		JOIN survey_categories sc ON ss.sc_id = ss.sc_id AND sc.sc_name = survey_category
-		JOIN survey_types st ON ss.st_id = ss.st_id AND st.st_name = survey_type
+        JOIN facilities f ON f.fac_mfl = lq.fac_mfl
+        JOIN survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN survey_categories sc ON ss.sc_id = ss.sc_id AND sc.sc_name = survey_category
+        JOIN survey_types st ON ss.st_id = ss.st_id AND st.st_name = survey_type
 WHERE
     lq.lq_specified_or_follow_up != ''
 AND f.fac_district = analytic_value
@@ -888,18 +1310,18 @@ SELECT
     lq.question_code,
     (case
         when lq.lq_specified_or_follow_up like 'blood bank available%' THEN 'blood bank available'
-		when lq.lq_specified_or_follow_up like 'transfusion done%' THEN 'transfusion done'
-		when lq.lq_specified_or_follow_up = 'n/a' THEN 'Not Applicable'
+        when lq.lq_specified_or_follow_up like 'transfusion done%' THEN 'transfusion done'
+        when lq.lq_specified_or_follow_up = 'n/a' THEN 'Not Applicable'
     end) as reason
 FROM
     log_questions lq
         JOIN
     questions q ON lq.question_code = q.question_code
         AND q.question_for = questionfor
-		JOIN facilities f ON f.fac_mfl = lq.fac_mfl
-		JOIN survey_status ss ON ss.fac_id = lq.fac_mfl
-		JOIN survey_categories sc ON ss.sc_id = ss.sc_id AND sc.sc_name = survey_category
-		JOIN survey_types st ON ss.st_id = ss.st_id AND st.st_name = survey_type
+        JOIN facilities f ON f.fac_mfl = lq.fac_mfl
+        JOIN survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN survey_categories sc ON ss.sc_id = ss.sc_id AND sc.sc_name = survey_category
+        JOIN survey_types st ON ss.st_id = ss.st_id AND st.st_name = survey_type
 WHERE
     lq.lq_specified_or_follow_up != ''
 AND f.fac_mfl = analytic_value
@@ -911,13 +1333,13 @@ CASE criteria
 WHEN 'national' THEN 
 SELECT 
     lq.lq_response,
-	count(f.fac_mfl) as total_response,
-	lq.question_code,
-	f.fac_level,
-	(CASE WHEN lq.lq_response = 'Yes' THEN 'Available'
-		  WHEN lq.lq_response = 'No' THEN 'Not Available'
-			WHEN (lq.lq_response = '' || lq.lq_response = 'n/a') THEN 'No data'
-			END) as response
+    COUNT(DISTINCT(f.fac_mfl)) AS total_response,
+    lq.question_code,
+    f.fac_tier,
+    (CASE WHEN lq.lq_response = 'Yes' THEN 'Available'
+          WHEN lq.lq_response = 'No' THEN 'Not Available'
+            WHEN (lq.lq_response = '' || lq.lq_response = 'n/a') THEN 'No data'
+            END) as response
 FROM
     log_questions lq
         JOIN
@@ -933,20 +1355,20 @@ FROM
         JOIN
     survey_categories sc ON (ss.sc_id = sc.sc_id
         AND sc.sc_name = survey_category)
-	WHERE q.question_code = 'QUC01'
-GROUP BY lq.lq_response, q.question_code,f.fac_level
-ORDER BY count(distinct f.fac_mfl);
+    WHERE q.question_code = 'QUC01'
+GROUP BY lq.lq_response, q.question_code,f.fac_tier
+ORDER BY count(DISTINCT f.fac_mfl);
 
 WHEN 'county' THEN 
 SELECT 
     lq.lq_response,
-	count(f.fac_mfl) as total_response,
-	lq.question_code,
-	f.fac_level,
-	(CASE WHEN lq.lq_response = 'Yes' THEN 'Available'
-		  WHEN lq.lq_response = 'No' THEN 'Not Available'
-			WHEN (lq.lq_response = '' || lq.lq_response = 'n/a') THEN 'No data'
-			END) as response
+    COUNT(DISTINCT(f.fac_mfl)) AS total_response,
+    lq.question_code,
+    f.fac_tier,
+    (CASE WHEN lq.lq_response = 'Yes' THEN 'Available'
+          WHEN lq.lq_response = 'No' THEN 'Not Available'
+            WHEN (lq.lq_response = '' || lq.lq_response = 'n/a') THEN 'No data'
+            END) as response
 FROM
     log_questions lq
         JOIN
@@ -962,21 +1384,21 @@ FROM
         JOIN
     survey_categories sc ON (ss.sc_id = sc.sc_id
         AND sc.sc_name = survey_category)
-	WHERE f.fac_county = analytic_value
+    WHERE f.fac_county = analytic_value
 AND  q.question_code = 'QUC01'
-GROUP BY lq.lq_response, q.question_code,f.fac_level
-ORDER BY count(distinct f.fac_mfl);
+GROUP BY lq.lq_response, q.question_code,f.fac_tier
+ORDER BY count(DISTINCT f.fac_mfl);
 
 WHEN 'district' THEN 
 SELECT 
     lq.lq_response,
-	count(f.fac_mfl) as total_response,
-	lq.question_code,
-	f.fac_level,
-	(CASE WHEN lq.lq_response = 'Yes' THEN 'Available'
-		  WHEN lq.lq_response = 'No' THEN 'Not Available'
-			WHEN (lq.lq_response = '' || lq.lq_response = 'n/a') THEN 'No data'
-			END) as response
+    COUNT(DISTINCT(f.fac_mfl)) AS total_response,
+    lq.question_code,
+    f.fac_tier,
+    (CASE WHEN lq.lq_response = 'Yes' THEN 'Available'
+          WHEN lq.lq_response = 'No' THEN 'Not Available'
+            WHEN (lq.lq_response = '' || lq.lq_response = 'n/a') THEN 'No data'
+            END) as response
 FROM
     log_questions lq
         JOIN
@@ -992,21 +1414,21 @@ FROM
         JOIN
     survey_categories sc ON (ss.sc_id = sc.sc_id
         AND sc.sc_name = survey_category)
-	WHERE f.fac_district = analytic_value
+    WHERE f.fac_district = analytic_value
 AND  q.question_code = 'QUC01'
-GROUP BY lq.lq_response, q.question_code,f.fac_level
-ORDER BY count(distinct f.fac_mfl);
+GROUP BY lq.lq_response, q.question_code,f.fac_tier
+ORDER BY count(DISTINCT f.fac_mfl);
 
 WHEN 'facility' THEN 
 SELECT 
     lq.lq_response,
-	count(f.fac_mfl) as total_response,
-	lq.question_code,
-	f.fac_level,
-	(CASE WHEN lq.lq_response = 'Yes' THEN 'Available'
-		  WHEN lq.lq_response = 'No' THEN 'Not Available'
-			WHEN (lq.lq_response = '' || lq.lq_response = 'n/a') THEN 'No data'
-			END) as response
+    COUNT(DISTINCT(f.fac_mfl)) AS total_response,
+    lq.question_code,
+    f.fac_tier,
+    (CASE WHEN lq.lq_response = 'Yes' THEN 'Available'
+          WHEN lq.lq_response = 'No' THEN 'Not Available'
+            WHEN (lq.lq_response = '' || lq.lq_response = 'n/a') THEN 'No data'
+            END) as response
 FROM
     log_questions lq
         JOIN
@@ -1022,20 +1444,20 @@ FROM
         JOIN
     survey_categories sc ON (ss.sc_id = sc.sc_id
         AND sc.sc_name = survey_category)
-	WHERE f.fac_mfl = analytic_value
+    WHERE f.fac_mfl = analytic_value
 AND  q.question_code = 'QUC01'
-GROUP BY lq.lq_response, q.question_code,f.fac_level
-ORDER BY count(distinct f.fac_mfl);
+GROUP BY lq.lq_response, q.question_code,f.fac_tier
+ORDER BY count(DISTINCT f.fac_mfl);
 END CASE;
 
 WHEN 'location' THEN
 CASE criteria
 WHEN 'national' THEN
 SELECT 
-    count(f.fac_mfl) as total_response,
+    COUNT(DISTINCT(f.fac_mfl)) AS total_response,
     lq.question_code,
     lq.lq_response,
-    f.fac_level,
+    f.fac_tier,
     (CASE
         WHEN lq.lq_response LIKE 'MCH%' THEN 'MCH'
         WHEN lq.lq_response LIKE 'U5 Clinic%' THEN 'U5 Clinic'
@@ -1060,15 +1482,15 @@ FROM
         AND sc.sc_name = survey_category)
 WHERE
     q.question_code = 'QUC02b'
-GROUP BY lq.lq_response , f.fac_level
+GROUP BY lq.lq_response , f.fac_tier
 ORDER BY count(f.fac_mfl);
 
 WHEN 'county' THEN
 SELECT 
-    count(f.fac_mfl) as total_response,
+    COUNT(DISTINCT(f.fac_mfl)) AS total_response,
     lq.question_code,
     lq.lq_response,
-    f.fac_level,
+    f.fac_tier,
     (CASE
         WHEN lq.lq_response LIKE 'MCH%' THEN 'MCH'
         WHEN lq.lq_response LIKE 'U5 Clinic%' THEN 'U5 Clinic'
@@ -1092,17 +1514,17 @@ FROM
     survey_categories sc ON (ss.sc_id = sc.sc_id
         AND sc.sc_name = survey_category)
 WHERE
-	f.fac_county = analytic_value
+    f.fac_county = analytic_value
  AND   q.question_code = 'QUC02b'
-GROUP BY lq.lq_response , f.fac_level
+GROUP BY lq.lq_response , f.fac_tier
 ORDER BY count(f.fac_mfl);
 
 WHEN 'district' THEN
 SELECT 
-    count(f.fac_mfl) as total_response,
+    COUNT(DISTINCT(f.fac_mfl)) AS total_response,
     lq.question_code,
     lq.lq_response,
-    f.fac_level,
+    f.fac_tier
     (CASE
         WHEN lq.lq_response LIKE 'MCH%' THEN 'MCH'
         WHEN lq.lq_response LIKE 'U5 Clinic%' THEN 'U5 Clinic'
@@ -1126,17 +1548,17 @@ FROM
     survey_categories sc ON (ss.sc_id = sc.sc_id
         AND sc.sc_name = survey_category)
 WHERE
-	f.fac_district = analytic_value
+    f.fac_district = analytic_value
  AND   q.question_code = 'QUC02b'
-GROUP BY lq.lq_response , f.fac_level
+GROUP BY lq.lq_response , f.fac_tier
 ORDER BY count(f.fac_mfl);
 
-WHEN 'county' THEN
+WHEN 'facility' THEN
 SELECT 
-    count(f.fac_mfl) as total_response,
+    COUNT(DISTINCT(f.fac_mfl)) AS total_response,
     lq.question_code,
     lq.lq_response,
-    f.fac_level,
+    f.fac_tier,
     (CASE
         WHEN lq.lq_response LIKE 'MCH%' THEN 'MCH'
         WHEN lq.lq_response LIKE 'U5 Clinic%' THEN 'U5 Clinic'
@@ -1160,9 +1582,9 @@ FROM
     survey_categories sc ON (ss.sc_id = sc.sc_id
         AND sc.sc_name = survey_category)
 WHERE
-	f.fac_mfl = analytic_value
+    f.fac_mfl = analytic_value
  AND   q.question_code = 'QUC02b'
-GROUP BY lq.lq_response , f.fac_level
+GROUP BY lq.lq_response , f.fac_tier
 ORDER BY count(f.fac_mfl);
 END CASE;
 
@@ -1170,10 +1592,10 @@ WHEN 'functionality' THEN
 CASE criteria
 WHEN 'national' THEN
 SELECT 
-    COUNT(f.fac_mfl) AS total_response,
+    COUNT(DISTINCT(f.fac_mfl)) AS total_response,
     lq.lq_response,
     q.question_code,
-    f.fac_level,
+    f.fac_tier,
     (CASE (q.question_code = 'QUC28'
         || q.question_code = 'QUC27')
         WHEN lq.lq_response = 'Yes' THEN 'functional'
@@ -1197,14 +1619,14 @@ FROM
 WHERE
     q.question_code = 'QUC27'
         || q.question_code = 'QUC28'
-GROUP BY lq.lq_response , q.question_code , f.fac_level;
+GROUP BY lq.lq_response , q.question_code , f.fac_tier;
 
 WHEN 'county' THEN
 SELECT 
-    COUNT(f.fac_mfl) AS total_response,
+    COUNT(DISTINCT(f.fac_mfl)) AS total_response,
     lq.lq_response,
     q.question_code,
-    f.fac_level,
+    f.fac_tier,
     (CASE (q.question_code = 'QUC28'
         || q.question_code = 'QUC27')
         WHEN lq.lq_response = 'Yes' THEN 'functional'
@@ -1229,14 +1651,14 @@ WHERE
     q.question_code = 'QUC27'
         || q.question_code = 'QUC28'
 AND f.fac_county = analytic_value
-GROUP BY lq.lq_response , q.question_code , f.fac_level;
+GROUP BY lq.lq_response , q.question_code , f.fac_tier;
 
 WHEN 'district' THEN
 SELECT 
-    COUNT(f.fac_mfl) AS total_response,
+    COUNT(DISTINCT(f.fac_mfl)) AS total_response,
     lq.lq_response,
     q.question_code,
-    f.fac_level,
+    f.fac_tier,
     (CASE (q.question_code = 'QUC28'
         || q.question_code = 'QUC27')
         WHEN lq.lq_response = 'Yes' THEN 'functional'
@@ -1261,14 +1683,14 @@ WHERE
     q.question_code = 'QUC27'
         || q.question_code = 'QUC28'
         AND f.fac_district = analytic_value
-GROUP BY lq.lq_response , q.question_code , f.fac_level;
+GROUP BY lq.lq_response , q.question_code , f.fac_tier;
 
 WHEN 'facililty' THEN 
 SELECT 
-    COUNT(f.fac_mfl) AS total_response,
+    COUNT(DISTINCT(f.fac_mfl)) AS total_response,
     lq.lq_response,
     q.question_code,
-    f.fac_level,
+    f.fac_tier,
     (CASE (q.question_code = 'QUC28'
         || q.question_code = 'QUC27')
         WHEN lq.lq_response = 'Yes' THEN 'functional'
@@ -1293,10 +1715,705 @@ WHERE
     q.question_code = 'QUC27'
         || q.question_code = 'QUC28'
         AND f.fac_mfl = analytic_value
-GROUP BY lq.lq_response , q.question_code , f.fac_level;
+GROUP BY lq.lq_response , q.question_code , f.fac_tier;
+END CASE;
+WHEN 'hcwServiceUnit' THEN 
+CASE criteria
+WHEN 'national' THEN 
+SELECT 
+    COUNT(DISTINCT wp.fac_mfl) AS total,
+    f.fac_county AS county,
+    wp.lq_response AS response,
+    sp.spoint as serviceUnit_name
+FROM
+    work_profile wp
+        JOIN
+    questions q ON q.question_code = wp.question_code
+        JOIN
+    facilities f ON wp.fac_mfl = f.fac_mfl
+    LEFT JOIN service_point sp ON sp.spoint_code = wp.lq_response
+WHERE
+    q.question_for = questionfor
+GROUP BY  wp.lq_response;
+WHEN 'district' THEN 
+SELECT 
+    COUNT(DISTINCT wp.fac_mfl) AS total,
+    f.fac_county AS county,
+    wp.lq_response AS response,
+    sp.spoint as serviceUnit_name
+FROM
+    work_profile wp
+        JOIN
+    questions q ON q.question_code = wp.question_code
+        JOIN
+    facilities f ON wp.fac_mfl = f.fac_mfl
+    LEFT JOIN service_point sp ON sp.spoint_code = wp.lq_response
+WHERE
+    q.question_for = questionfor
+        AND f.fac_district = analytic_value
+GROUP BY  wp.lq_response;
 
+WHEN 'county' THEN 
+SELECT 
+    COUNT(DISTINCT wp.fac_mfl) AS total,
+    f.fac_county AS county,
+    wp.lq_response AS response,
+    sp.spoint as serviceUnit_name
+FROM
+    work_profile wp
+        JOIN
+    questions q ON q.question_code = wp.question_code
+        JOIN
+    facilities f ON wp.fac_mfl = f.fac_mfl
+    LEFT JOIN service_point sp ON sp.spoint_code = wp.lq_response
+WHERE
+    q.question_for = questionfor
+        AND f.fac_county = analytic_value
+GROUP BY  wp.lq_response;
+
+WHEN 'facility' THEN 
+SELECT 
+    COUNT(DISTINCT wp.fac_mfl) AS total,
+    f.fac_county AS county,
+    wp.lq_response AS response,
+    sp.spoint as serviceUnit_name
+FROM
+    work_profile wp
+        JOIN
+    questions q ON q.question_code = wp.question_code
+        JOIN
+    facilities f ON wp.fac_mfl = f.fac_mfl
+    LEFT JOIN service_point sp ON sp.spoint_code = wp.lq_response
+WHERE
+    q.question_for = questionfor
+        AND f.fac_mfl = analytic_value
+GROUP BY wp.lq_response;
+END CASE;
+
+WHEN 'hcwServiceUnit_raw' THEN 
+CASE criteria
+WHEN 'national' THEN 
+SELECT 
+     f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    wp.lq_response,
+    q.question_name
+FROM
+    work_profile wp
+        JOIN
+    questions q ON q.question_code = wp.question_code
+        JOIN
+    facilities f ON wp.fac_mfl = f.fac_mfl
+    LEFT JOIN service_point sp ON sp.spoint_code = wp.lq_response
+WHERE
+    q.question_for = questionfor
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+WHEN 'district' THEN 
+SELECT 
+     f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    wp.lq_response,
+    q.question_name
+FROM
+    work_profile wp
+        JOIN
+    questions q ON q.question_code = wp.question_code
+        JOIN
+    facilities f ON wp.fac_mfl = f.fac_mfl
+    LEFT JOIN service_point sp ON sp.spoint_code = wp.lq_response
+WHERE
+    q.question_for = questionfor
+        AND f.fac_district = analytic_value
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+WHEN 'county' THEN 
+SELECT 
+     f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    wp.lq_response,
+    q.question_name
+FROM
+    work_profile wp
+        JOIN
+    questions q ON q.question_code = wp.question_code
+        JOIN
+    facilities f ON wp.fac_mfl = f.fac_mfl
+    LEFT JOIN service_point sp ON sp.spoint_code = wp.lq_response
+WHERE
+    q.question_for = questionfor
+        AND f.fac_county = analytic_value
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+WHEN 'facility' THEN 
+SELECT 
+     f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    wp.lq_response,
+    q.question_name
+FROM
+    work_profile wp
+        JOIN
+    questions q ON q.question_code = wp.question_code
+        JOIN
+    facilities f ON wp.fac_mfl = f.fac_mfl
+    LEFT JOIN service_point sp ON sp.spoint_code = wp.lq_response
+WHERE
+    q.question_for = questionfor
+        AND f.fac_mfl = analytic_value
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+END CASE;
+
+WHEN 'hcwRetention' THEN 
+CASE criteria
+WHEN 'national' THEN 
+SELECT 
+    COUNT(DISTINCT id_number) AS total,
+    lqh.lq_response as response,
+    q.question_name as question,
+    f.fac_tier
+FROM
+    hcw_list hl
+        JOIN
+    log_questions_hcw lqh ON lqh.fac_mfl = hl.mfl_code
+        JOIN
+    facilities f ON f.fac_mfl = lqh.fac_mfl
+        JOIN
+    questions q ON q.question_code = lqh.question_code
+    AND q.question_for = questionfor
+WHERE
+    lqh.question_code = 'QUC32'
+GROUP BY lqh.lq_response , f.fac_tier
+ORDER BY total;
+
+WHEN 'county' THEN 
+SELECT 
+    COUNT(DISTINCT id_number) AS total,
+    lqh.lq_response as response,
+    q.question_name as question,
+    f.fac_tier
+FROM
+    hcw_list hl
+        JOIN
+    log_questions_hcw lqh ON lqh.fac_mfl = hl.mfl_code
+        JOIN
+    facilities f ON f.fac_mfl = lqh.fac_mfl
+        JOIN
+    questions q ON q.question_code = lqh.question_code
+    AND q.question_for = questionfor
+WHERE
+    lqh.question_code = 'QUC32'
+        AND f.fac_county = analytic_value
+GROUP BY lqh.lq_response , f.fac_tier
+ORDER BY total;
+
+WHEN 'district' THEN 
+SELECT 
+    COUNT(DISTINCT id_number) AS total,
+    lqh.lq_response as response,
+    q.question_name as question,
+    f.fac_tier
+FROM
+    hcw_list hl
+        JOIN
+    log_questions_hcw lqh ON lqh.fac_mfl = hl.mfl_code
+        JOIN
+    facilities f ON f.fac_mfl = lqh.fac_mfl
+        JOIN
+    questions q ON q.question_code = lqh.question_code
+    AND q.question_for = questionfor
+WHERE
+    lqh.question_code = 'QUC32'
+        AND f.fac_district = analytic_value
+GROUP BY lqh.lq_response , f.fac_tier
+ORDER BY total;
+
+WHEN 'facility' THEN 
+SELECT 
+    COUNT(DISTINCT id_number) AS total,
+    lqh.lq_response as response,
+    q.question_name as question,
+    f.fac_tier
+FROM
+    hcw_list hl
+        JOIN
+    log_questions_hcw lqh ON lqh.fac_mfl = hl.mfl_code
+        JOIN
+    facilities f ON f.fac_mfl = lqh.fac_mfl
+        JOIN
+    questions q ON q.question_code = lqh.question_code
+    AND q.question_for = questionfor
+WHERE
+    lqh.question_code = 'QUC32'
+        AND f.fac_mfl = analytic_value
+GROUP BY lqh.lq_response , f.fac_tier
+ORDER BY total;
+END CASE;
+
+WHEN 'hcwRetention_raw' THEN 
+CASE criteria
+WHEN 'national' THEN 
+SELECT 
+    f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    lqh.lq_response,
+    q.question_name
+    
+FROM
+    hcw_list hl
+        JOIN
+    log_questions_hcw lqh ON lqh.fac_mfl = hl.mfl_code
+        JOIN
+    facilities f ON f.fac_mfl = lqh.fac_mfl
+        JOIN
+    questions q ON q.question_code = lqh.question_code
+    AND q.question_for = questionfor
+WHERE
+    lqh.question_code = 'QUC32'
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+WHEN 'county' THEN 
+SELECT 
+     f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    lqh.lq_response,
+    q.question_name
+FROM
+    hcw_list hl
+        JOIN
+    log_questions_hcw lqh ON lqh.fac_mfl = hl.mfl_code
+        JOIN
+    facilities f ON f.fac_mfl = lqh.fac_mfl
+        JOIN
+    questions q ON q.question_code = lqh.question_code
+    AND q.question_for = questionfor
+WHERE
+    lqh.question_code = 'QUC32'
+        AND f.fac_county = analytic_value
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+WHEN 'district' THEN 
+SELECT 
+     f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    lqh.lq_response,
+    q.question_name
+FROM
+    hcw_list hl
+        JOIN
+    log_questions_hcw lqh ON lqh.fac_mfl = hl.mfl_code
+        JOIN
+    facilities f ON f.fac_mfl = lqh.fac_mfl
+        JOIN
+    questions q ON q.question_code = lqh.question_code
+    AND q.question_for = questionfor
+WHERE
+    lqh.question_code = 'QUC32'
+        AND f.fac_district = analytic_value
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+WHEN 'facility' THEN 
+SELECT 
+     f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    lqh.lq_response,
+    q.question_name
+FROM
+    hcw_list hl
+        JOIN
+    log_questions_hcw lqh ON lqh.fac_mfl = hl.mfl_code
+        JOIN
+    facilities f ON f.fac_mfl = lqh.fac_mfl
+        JOIN
+    questions q ON q.question_code = lqh.question_code
+    AND q.question_for = questionfor
+WHERE
+    lqh.question_code = 'QUC32'
+        AND f.fac_mfl = analytic_value
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+END CASE;
+
+WHEN 'hcwTransfer' THEN 
+CASE criteria 
+WHEN 'national' THEN 
+SELECT 
+    COUNT(DISTINCT lq.hcw_id) AS total,
+    lq.lq_response AS response,
+    lq.question_code,
+    q.question_name
+FROM
+    log_questions_hcw lq
+        JOIN
+    questions q ON lq.question_code = q.question_code
+        AND q.question_for = questionfor
+        JOIN
+    hcw_list hl ON hl.mfl_code = lq.fac_mfl
+        JOIN 
+    facilities f ON f.fac_mfl = lq.fac_mfl
+WHERE
+    q.question_code != 'QUC32'
+GROUP BY lq.question_code,lq.lq_response;
+
+WHEN 'county' THEN 
+SELECT 
+    COUNT(DISTINCT lq.hcw_id) AS total,
+    lq.lq_response AS response,
+    lq.question_code,
+    q.question_name
+FROM
+    log_questions_hcw lq
+        JOIN
+    questions q ON lq.question_code = q.question_code
+        AND q.question_for = questionfor
+        JOIN
+    hcw_list hl ON hl.mfl_code = lq.fac_mfl
+        JOIN 
+    facilities f ON f.fac_mfl = lq.fac_mfl
+    AND f.fac_county = analytic_value
+WHERE
+    q.question_code != 'QUC32'
+GROUP BY lq.question_code,lq.lq_response;
+
+WHEN 'district' THEN 
+SELECT 
+    COUNT(DISTINCT lq.hcw_id) AS total,
+    lq.lq_response AS response,
+    lq.question_code,
+    q.question_name
+FROM
+    log_questions_hcw lq
+        JOIN
+    questions q ON lq.question_code = q.question_code
+        AND q.question_for = questionfor
+        JOIN
+    hcw_list hl ON hl.mfl_code = lq.fac_mfl
+        JOIN 
+    facilities f ON f.fac_mfl = lq.fac_mfl
+    AND f.fac_district = analytic_value
+WHERE
+    q.question_code != 'QUC32'
+GROUP BY lq.question_code,lq.lq_response;
+
+WHEN 'facility' THEN 
+SELECT 
+    COUNT(DISTINCT lq.hcw_id) AS total,
+    lq.lq_response AS response,
+    lq.question_code,
+    q.question_name
+FROM
+    log_questions_hcw lq
+        JOIN
+    questions q ON lq.question_code = q.question_code
+        AND q.question_for = questionfor
+        JOIN
+    hcw_list hl ON hl.mfl_code = lq.fac_mfl
+        JOIN 
+    facilities f ON f.fac_mfl = lq.fac_mfl
+    AND f.fac_mfl = analytic_value
+WHERE
+    q.question_code != 'QUC32'
+GROUP BY lq.question_code,lq.lq_response;
+END CASE;
+
+
+WHEN 'hcwTransfer_raw' THEN 
+CASE criteria 
+WHEN 'national' THEN 
+SELECT 
+     f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    lq.lq_response,
+    q.question_name
+FROM
+    log_questions_hcw lq
+        JOIN
+    questions q ON lq.question_code = q.question_code
+        AND q.question_for = questionfor
+        JOIN
+    hcw_list hl ON hl.mfl_code = lq.fac_mfl
+        JOIN 
+    facilities f ON f.fac_mfl = lq.fac_mfl
+WHERE
+    q.question_code != 'QUC32'
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+WHEN 'county' THEN 
+SELECT 
+     f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    lq.lq_response,
+    q.question_name
+FROM
+    log_questions_hcw lq
+        JOIN
+    questions q ON lq.question_code = q.question_code
+        AND q.question_for = questionfor
+        JOIN
+    hcw_list hl ON hl.mfl_code = lq.fac_mfl
+        JOIN 
+    facilities f ON f.fac_mfl = lq.fac_mfl
+    AND f.fac_county = analytic_value
+WHERE
+    q.question_code != 'QUC32'
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+WHEN 'district' THEN 
+SELECT 
+     f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    lq.lq_response,
+    q.question_name
+FROM
+    log_questions_hcw lq
+        JOIN
+    questions q ON lq.question_code = q.question_code
+        AND q.question_for = questionfor
+        JOIN
+    hcw_list hl ON hl.mfl_code = lq.fac_mfl
+        JOIN 
+    facilities f ON f.fac_mfl = lq.fac_mfl
+    AND f.fac_district = analytic_value
+WHERE
+    q.question_code != 'QUC32'
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+WHEN 'facility' THEN 
+SELECT 
+     f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    lq.lq_response,
+    q.question_name
+FROM
+    log_questions_hcw lq
+        JOIN
+    questions q ON lq.question_code = q.question_code
+        AND q.question_for = questionfor
+        JOIN
+    hcw_list hl ON hl.mfl_code = lq.fac_mfl
+        JOIN 
+    facilities f ON f.fac_mfl = lq.fac_mfl
+    AND f.fac_mfl = analytic_value
+WHERE
+    q.question_code != 'QUC32'
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+END CASE;
+
+WHEN 'hcwresponse' THEN
+CASE criteria
+WHEN 'national' THEN
+SELECT 
+     q.question_code,
+    count(DISTINCT(f.fac_mfl)) as total_response,
+    lq_response as response,
+    (CASE WHEN (lq.lq_response = '' || lq.lq_response = 'n/a' 
+    || lq.lq_response IS NULL) THEN 'No data' 
+            WHEN lq.lq_response = 'Yes' THEN 'Yes' 
+            WHEN lq.lq_response = 'No' THEN 'No' END) as response
+FROM
+    log_questions lq
+        JOIN
+            questions q ON (lq.question_code = q.question_code
+        AND q.question_for = questionfor)
+        JOIN
+            facilities f  ON f.fac_mfl = lq.fac_mfl 
+WHERE lq.lq_response = 'Yes' || lq.lq_response = 'No' || lq.lq_response = 'n/a'
+GROUP BY lq.question_code, response
+ORDER BY lq.question_code,count(DISTINCT f.fac_mfl);
+
+WHEN 'county' THEN
+SELECT 
+     q.question_code,
+    count(DISTINCT(f.fac_mfl)) as total_response,
+    lq_response as response,
+    (CASE WHEN (lq.lq_response = '' || lq.lq_response = 'n/a'
+    || lq.lq_response IS NULL) THEN 'No data' 
+            WHEN lq.lq_response = 'Yes' THEN 'Yes' 
+            WHEN lq.lq_response = 'No' THEN 'No' END) as response
+
+FROM
+    log_questions lq
+        JOIN
+            questions q ON (lq.question_code = q.question_code
+        AND q.question_for = questionfor)
+        JOIN
+            facilities f  ON f.fac_mfl = lq.fac_mfl 
+    WHERE f.fac_county = analytic_value AND 
+    lq.lq_response = 'Yes' || lq.lq_response = 'No' || lq.lq_response = 'n/a'
+
+GROUP BY lq.question_code, response
+ORDER BY lq.question_code,count(DISTINCT f.fac_mfl);
+
+WHEN 'district' THEN
+SELECT 
+     q.question_code,
+    count(DISTINCT(f.fac_mfl)) as total_response,
+    lq_response as response,
+    (CASE WHEN (lq.lq_response = '' || lq.lq_response = 'n/a'
+    || lq.lq_response IS NULL) THEN 'No data' 
+            WHEN lq.lq_response = 'Yes' THEN 'Yes' 
+            WHEN lq.lq_response = 'No' THEN 'No' END) as response
+FROM
+    log_questions lq
+        JOIN
+            questions q ON (lq.question_code = q.question_code
+        AND q.question_for = questionfor)
+        JOIN
+            facilities f  ON f.fac_mfl = lq.fac_mfl 
+    WHERE f.fac_district = analytic_value AND 
+    lq.lq_response = 'Yes' || lq.lq_response = 'No' || lq.lq_response = 'n/a'
+GROUP BY lq.question_code, response
+ORDER BY lq.question_code,count(DISTINCT f.fac_mfl);
+
+WHEN 'facility' THEN
+SELECT 
+     q.question_code,
+    count(distinct f.fac_mfl) as total_response,
+    lq_response as response,
+(CASE WHEN (lq.lq_response = '' || lq.lq_response = 'n/a'
+|| lq.lq_response IS NULL ) THEN 'No data' 
+            WHEN lq.lq_response = 'Yes' THEN 'Yes' 
+            WHEN lq.lq_response = 'No' THEN 'No' END) as response
+FROM
+    log_questions lq
+        JOIN
+            questions q ON (lq.question_code = q.question_code
+        AND q.question_for = questionfor)
+        JOIN
+            facilities f  ON f.fac_mfl = lq.fac_mfl 
+    WHERE f.fac_mfl = analytic_value AND 
+    lq.lq_response = 'Yes' || lq.lq_response = 'No' || lq.lq_response = 'n/a'
+GROUP BY lq.question_code, response
+ORDER BY lq.question_code,count(DISTINCT f.fac_mfl);
+END CASE;
+
+WHEN 'hcwresponse_raw' THEN
+CASE criteria
+WHEN 'national' THEN
+SELECT 
+     (f.fac_mfl),
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    lq_response,
+    q.question_name
+FROM
+    log_questions lq
+        JOIN
+            questions q ON (lq.question_code = q.question_code
+        AND q.question_for = questionfor)
+        JOIN
+            facilities f  ON f.fac_mfl = lq.fac_mfl 
+WHERE lq.lq_response = 'Yes' || lq.lq_response = 'No' || lq.lq_response = 'n/a'
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+WHEN 'county' THEN
+SELECT 
+    (f.fac_mfl),
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    lq_response,
+    q.question_name
+
+FROM
+    log_questions lq
+        JOIN
+            questions q ON (lq.question_code = q.question_code
+        AND q.question_for = questionfor)
+        JOIN
+            facilities f  ON f.fac_mfl = lq.fac_mfl 
+    WHERE f.fac_county = analytic_value AND 
+    lq.lq_response = 'Yes' || lq.lq_response = 'No' || lq.lq_response = 'n/a'
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+WHEN 'district' THEN
+SELECT 
+     (f.fac_mfl),
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    lq_response,
+    q.question_name
+FROM
+    log_questions lq
+        JOIN
+            questions q ON (lq.question_code = q.question_code
+        AND q.question_for = questionfor)
+        JOIN
+            facilities f  ON f.fac_mfl = lq.fac_mfl 
+    WHERE f.fac_district = analytic_value AND 
+    lq.lq_response = 'Yes' || lq.lq_response = 'No' || lq.lq_response = 'n/a'
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+WHEN 'facility' THEN
+SELECT 
+     (f.fac_mfl),
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    lq_response,
+    q.question_name
+FROM
+    log_questions lq
+        JOIN
+            questions q ON (lq.question_code = q.question_code
+        AND q.question_for = questionfor)
+        JOIN
+            facilities f  ON f.fac_mfl = lq.fac_mfl 
+    WHERE f.fac_mfl = analytic_value AND 
+    lq.lq_response = 'Yes' || lq.lq_response = 'No' || lq.lq_response = 'n/a'
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
 END CASE;
 END CASE;
-
-
 END
