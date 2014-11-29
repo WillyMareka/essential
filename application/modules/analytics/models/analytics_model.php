@@ -1283,13 +1283,18 @@ WHERE
                             case 'hcwassessment':
                                 $data[$value['indicator_name']][$value['response']] = (int)$value['total'];
                                 break;
+                           
+
 
                             case 'hcwcorrectness_raw':
                                 $data[] = $value;
+                                //echo '<pre>';print_r($this->dataSet);echo '</pre>';die;
                                 break;
+                            
 
                             case 'hcwclassification_raw':
                                 $data[] = $value;
+                                //echo '<pre>';print_r($this->dataSet);echo '</pre>';die;
                                 break;
 
                             case 'hcwassessment_raw':
