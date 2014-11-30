@@ -1951,8 +1951,9 @@ class Analytics extends MY_Controller
         //         $results = $this->arrays->format($results, 'fac_mfl', 'eq_name', 'ae_location');
         //         break;
         // }
+        // echo '<pre>';print_r($results);die;
         $results = $this->arrays->reset($results);
-        echo '<pre>';print_r($results);die;
+        // echo '<pre>';print_r($results);die;
         echo $this->export->generate($results, 'Equipment Statistics for' . ucwords($for) . '(' . $value . ')', $form);
     }
     public function getTreatmentRaw($criteria, $value, $survey, $survey_category, $statistic, $option, $form) {

@@ -1689,7 +1689,7 @@ GROUP BY tl.treatmentID ORDER BY tl.treatmentID ASC";
                     
                     //echo "<pre>";print_r($this->dataSet);echo "</pre>";die;
                     foreach ($this->dataSet as $value) {
-                        if ($statistic == 'availability_raw' || $statistic == 'unavailability_raw' || $statistic == 'location_raw') {
+                        if ($statistic == 'availability_raw' || $statistic == 'unavailability_raw' || $statistic == 'location_raw'|| $statistic == 'functionality_raw') {
                             $data[] = $value;
                         } else if (array_key_exists('frequency', $value)) {
                             $data[$value['equipment_name']][$value['frequency']] = (int)$value['total_response'];
