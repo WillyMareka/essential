@@ -5346,8 +5346,18 @@ class Analytics extends MY_Controller
         
         echo $this->export->generate($results, 'BEMONC Statistics for' . ucwords($for) . '(' . $value . ')', $form);
     }
+
+    public function getBemONCReasonRAW($criteria, $value, $survey, $survey_category,$form){
+ $results = $this->analytics_model->getBemONCReason($criteria, $value, $survey, $survey_category,'response_raw');
+          // echo "<pre>";print_r($results);echo "</pre>";die;
+        $results = $this->arrays->reset($results);
+      
+
+        
+        echo $this->export->generate($results, 'BEMONC Statistics for' . ucwords($for) . '(' . $value . ')', $form);
+    }
     public function getBemONCReason($criteria, $value, $survey, $survey_category) {
-        $results = $this->analytics_model->getBemONCReason($criteria, $value, $survey, $survey_category);
+        $results = $this->analytics_model->getBemONCReason($criteria, $value, $survey, $survey_category,'response');
         
         //echo "<pre>"; print_r($results);echo "</pre>";die;
         foreach ($results as $key => $result) {

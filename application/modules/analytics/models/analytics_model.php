@@ -2020,7 +2020,7 @@ GROUP BY tl.treatmentID ORDER BY tl.treatmentID ASC";
                     
                     //echo "<pre>";print_r($this->dataSet);echo "</pre>";die;
                     foreach ($this->dataSet as $value) {
-                        if ($statistic == 'availability_raw' || $statistic == 'quantity_raw' || $statistic == 'unavailability_raw' || $statistic == 'supplier_raw') {
+                        if ($statistic == 'availability_raw' || $statistic == 'quantity_raw' || $statistic == 'unavailability_raw' || $statistic == 'supplier_raw'|| $statistic == 'location_raw') {
                             $data[] = $value;
                         } else if (array_key_exists('frequency', $value)) {
                             switch ($for) {
@@ -3981,14 +3981,14 @@ ORDER BY question_code";
             return $data;
         }
         
-        public function getBemONCReason($criteria, $value, $survey, $survey_category) {
+        public function getBemONCReason($criteria, $value, $survey, $survey_category,$statistic) {
             $value = urldecode($value);
             $newData = array();
             
             /*using CI Database Active Record*/
             $data = $data_set = $data_series = $analytic_var = $data_categories = array();
             
-            $query = "CALL get_bemonc_reason('" . $criteria . "','" . $value . "','" . $survey . "','" . $survey_category . "');";
+            $query = "CALL get_bemonc_reason('" . $criteria . "','" . $value . "','" . $survey . "','" . $survey_category . "','" . $statistic . "');";
             try {
                 $queryData = $this->db->query($query, array($value));
                 $this->dataSet = $queryData->result_array();
@@ -4002,9 +4002,14 @@ ORDER BY question_code";
                     
                     //echo "<pre>";print_r($this->dataSet);echo "</pre>";die;
                     foreach ($this->dataSet as $value) {
+                        if($statistic=='response'){
                         if (array_key_exists('challenge', $value)) {
                             $data[$value['flevel']][$value['challenge']] = (int)$value['total_response'];
                         }
+                    }
+                    else{
+                        $data[]=$value;
+                    }   
                     }
                 }
                 
