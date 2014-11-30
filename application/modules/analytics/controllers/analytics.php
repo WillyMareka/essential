@@ -1937,21 +1937,22 @@ class Analytics extends MY_Controller
     }
     public function getEquipmentRaw($criteria, $value, $survey, $survey_category, $for, $statistic, $form) {
         $results = $this->analytics_model->getEquipmentStatistics($criteria, $value, $survey, $survey_category, $for, $statistic);
-        
-        switch ($statistic) {
-            case 'availability_raw':
-                $results = $this->arrays->format($results, 'fac_mfl', 'equipment', 'ae_availability');
-                break;
+         // echo '<pre>';print_r($results);die;
+        // switch ($statistic) {
+        //     case 'availability_raw':
+        //         $results = $this->arrays->format($results, 'fac_mfl', 'eq_name', 'ae_availability');
+        //         break;
 
-            case 'unavailability_raw':
-                $results = $this->arrays->format($results, 'fac_mfl', 'equipment', 'ae_reason_unavailable');
-                break;
+        //     case 'unavailability_raw':
+        //         $results = $this->arrays->format($results, 'fac_mfl', 'eq_name', 'ae_reason_unavailable');
+        //         break;
 
-            case 'location_raw':
-                $results = $this->arrays->format($results, 'fac_mfl', 'equipment', 'ae_location');
-                break;
-        }
-        
+        //     case 'location_raw':
+        //         $results = $this->arrays->format($results, 'fac_mfl', 'eq_name', 'ae_location');
+        //         break;
+        // }
+        $results = $this->arrays->reset($results);
+        echo '<pre>';print_r($results);die;
         echo $this->export->generate($results, 'Equipment Statistics for' . ucwords($for) . '(' . $value . ')', $form);
     }
     public function getTreatmentRaw($criteria, $value, $survey, $survey_category, $statistic, $option, $form) {
@@ -3093,13 +3094,24 @@ class Analytics extends MY_Controller
             $colors = array('#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970', '#f28f43', '#77a1e5', '#c42525', '#dddddd');
             //$this->populateGraph($resultArray, '', $category, $criteria, 'percent', 70, 'bar', (int)sizeof($category), '', '', '', $colors);
            $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 90, 'bar', '', $for, 'question', $statistics, $colors);
-        }else {
+        }
+        else if($statistic=='total' && $for=='nur'){
+            foreach ($results as $key => $value) {
+                $resultArray[]=array('name'=>$key,'data'=>$value);
+            }
+            var_dump($resultArray);
+            $colors = array('#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970', '#f28f43', '#77a1e5', '#c42525', '#dddddd');
+            $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 90, 'bar', '', $for, 'question', $statistics, $colors);
+        }
+
+        else {
             $number = $resultArray = $q = $data = $gdata = $res = array();
             $number = $resultArray = $q = $yes = $no = $null = array();
             foreach ($results as $key => $value) {
                 $q[] = $key;
                 $data[] = $value;
             }
+            // var_dump($data);die;
             foreach ($data as $k => $val) {
                 foreach ($val as $r => $value_) {
                     $gdata[$r][] = $value_;
@@ -3194,6 +3206,7 @@ class Analytics extends MY_Controller
         $results = $this->analytics_model->getQuestionStatistics($criteria, $value, $survey, $survey_category, $for, $statistics);
         
         $results = $this->arrays->reset($results);
+        // var_dump($results);die;
         
         echo $this->export->generate($results, 'Question Statistics for' . ucwords($for) . '(' . $value . ')', $form);
     }
@@ -3244,6 +3257,7 @@ class Analytics extends MY_Controller
         echo $this->export->generate($results, 'Indicator Comparison for' . ucwords($for) . '(' . $value . ')', $form);
     }
     
+
     /**
      * [getBedStatistics description]
      * @param  [type] $criteria        [description]
@@ -3328,6 +3342,10 @@ class Analytics extends MY_Controller
      */
     public function getHFM($criteria, $value, $survey, $survey_category) {
         $this->getQuestionStatistics($criteria, $value, $survey, $survey_category, 'commi', 'response');
+    }
+
+     public function getNurses($criteria, $value, $survey, $survey_category) {
+        $this->getQuestionStatistics($criteria, $value, $survey, $survey_category, 'nur', 'total');
     }
     
     public function getCEOC($criteria, $value, $survey, $survey_category) {
