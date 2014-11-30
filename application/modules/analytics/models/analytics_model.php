@@ -3922,14 +3922,14 @@ ORDER BY question_code";
          *      .bemonc
          *      .cemonc
          */
-        public function getBemONCQuestion($criteria, $value, $survey, $survey_category) {
+        public function getBemONCQuestion($criteria, $value, $survey, $survey_category,$statistic) {
             $value = urldecode($value);
             $newData = array();
             
             /*using CI Database Active Record*/
             $data = $data_set = $data_series = $analytic_var = $data_categories = array();
             
-            $query = "CALL get_bemonc_question('" . $criteria . "','" . $value . "','" . $survey . "','" . $survey_category . "');";
+            $query = "CALL get_bemonc_question('" . $criteria . "','" . $value . "','" . $survey . "','" . $survey_category ."','" . $statistic . "');";
             try {
                 $this->dataSet = $this->db->query($query, array($value));
                 $this->dataSet = $this->dataSet->result_array();
@@ -3947,8 +3947,13 @@ ORDER BY question_code";
                         $question = substr($question, 18);
                     endif;
                     $count++;
+                    if($statistic=='response'){
+                        $data[$question][$value_['response']] = (int)$value_['total'];
+                    }
+                    else{
+                        $data[]=$value_;
+                    }
                     
-                    $data[$question][$value_['response']] = (int)$value_['total'];
                     
                     //echo "<pre>";print_r($question);echo "</pre>";
                     // var_dump($value_['sf_code']);die;

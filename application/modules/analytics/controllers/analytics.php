@@ -1509,7 +1509,15 @@ class Analytics extends MY_Controller
         
         
     }
-    
+    public function getSuppliesRAW($criteria, $value, $survey, $survey_category,$for,$statistic,$form){
+ $results = $this->analytics_model->getSuppliesStatistics($criteria, $value, $survey, $survey_category,$for,$statistic);
+          // echo "<pre>";print_r($results);echo "</pre>";die;
+        $results = $this->arrays->reset($results);
+      
+
+        
+        echo $this->export->generate($results, 'BEMONC Statistics for' . ucwords($for) . '(' . $value . ')', $form);
+    }
     /**
      * [getMNHSuppliesReason description]
      * @param  [type] $criteria [description]
@@ -1953,7 +1961,7 @@ class Analytics extends MY_Controller
         // }
         // echo '<pre>';print_r($results);die;
         $results = $this->arrays->reset($results);
-        // echo '<pre>';print_r($results);die;
+        echo '<pre>';print_r($results);die;
         echo $this->export->generate($results, 'Equipment Statistics for' . ucwords($for) . '(' . $value . ')', $form);
     }
     public function getTreatmentRaw($criteria, $value, $survey, $survey_category, $statistic, $option, $form) {
@@ -5298,7 +5306,7 @@ class Analytics extends MY_Controller
     public function getBemONCQuestion($criteria, $value, $survey, $survey_category) {
         $number = $resultArray = $q = array();
         $number = $resultArray = $q = $gData = array();
-        $results = $this->analytics_model->getBemONCQuestion($criteria, $value, $survey, $survey_category);
+        $results = $this->analytics_model->getBemONCQuestion($criteria, $value, $survey, $survey_category,'response');
         $number = $resultArray = $q = $data = $gdata = $res = array();
         $number = $resultArray = $q = $yes = $no = $null = array();
         foreach ($results as $key => $value) {
@@ -5329,6 +5337,15 @@ class Analytics extends MY_Controller
         $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 90, 'bar');
     }
     
+    public function getBemONCQuestionRAW($criteria, $value, $survey, $survey_category,$form){
+ $results = $this->analytics_model->getBemONCQuestion($criteria, $value, $survey, $survey_category,'response_raw');
+          // echo "<pre>";print_r($results);echo "</pre>";die;
+        $results = $this->arrays->reset($results);
+      
+
+        
+        echo $this->export->generate($results, 'BEMONC Statistics for' . ucwords($for) . '(' . $value . ')', $form);
+    }
     public function getBemONCReason($criteria, $value, $survey, $survey_category) {
         $results = $this->analytics_model->getBemONCReason($criteria, $value, $survey, $survey_category);
         
