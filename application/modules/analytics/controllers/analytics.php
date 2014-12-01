@@ -3348,8 +3348,8 @@ class Analytics extends MY_Controller
     
     }*/
     
-    public function getDiarrhoeaStatistics($criteria, $value, $survey, $survey_category) {
-        $results = $this->analytics_model->getDiarrhoeaStatistics($criteria, $value, $survey, $survey_category, 'waste');
+    public function getDiarrhoeaStatistics($criteria, $value, $survey, $survey_category,$statistic) {
+        $results = $this->analytics_model->getDiarrhoeaStatistics($criteria, $value, $survey, $survey_category,$statistic);
         
         // echo "<pre>";print_r($results);echo "</pre>";die;
         foreach ($results as $key => $value) {
@@ -3357,9 +3357,15 @@ class Analytics extends MY_Controller
             $gData[] = $value;
         }
         $resultArray[] = array('name' => 'Numbers', 'data' => $gData);
-        $this->populateGraph($resultArray, '', $category, $criteria, '', 70, 'bar', '', $for, 'waste', $statistics);
+        $this->populateGraph($resultArray, '', $category, $criteria, '', 70, 'bar', '','diarrhoea', 'response');
     }
     
+    public function getDiarrhoeaStatisticsRaw($criteria,$value,$survey,$survey_category,$statistic,$form){
+        $results = $this->analytics_model->getDiarrhoeaStatistics($criteria,$value,$survey,$survey_category,'response_raw');
+         $results = $this->arrays->reset($results);
+        
+        echo $this->export->generate($results, 'Diarrhoea Statistics for'  .'(' . $value . ')', $form);
+    }
     /**
      * [getWasteStatistics description]
      * @param  [type] $criteria        [description]

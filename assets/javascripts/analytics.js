@@ -1189,6 +1189,10 @@ function setRawUrl(criteria, county, district, facility, survey,
         raw_url = 'analytics/getBedRaw/' + criteria + '/' + value + '/' +
           survey + '/' + survey_category + '/' + data_for+ '/' + statistic;
         break;
+        case 'diarrhoea':
+        raw_url = 'analytics/getDiarrhoeaStatisticsRaw/' + criteria + '/' + value + '/' +
+          survey + '/' + survey_category + '/' + data_for+ '/' + statistic;
+        break;
     }
     return raw_url;
   }

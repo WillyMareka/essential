@@ -4036,13 +4036,13 @@ ORDER BY question_code";
          * @param  [type] $survey_category [description]
          * @return [type]                  [description]
          */
-        public function getDiarrhoeaStatistics($criteria, $value, $survey, $survey_category) {
+        public function getDiarrhoeaStatistics($criteria, $value, $survey, $survey_category,$statistic) {
             
             /*using CI Database Active Record*/
             $value = urldecode($value);
             $data = array();
             
-            $query = "CALL get_diarrhoea_statistics('" . $criteria . "','" . $value . "','" . $survey . "','" . $survey_category . "');";
+            $query = "CALL get_diarrhoea_statistics('" . $criteria . "','" . $value . "','" . $survey . "','" . $survey_category . "','" . $statistic . "');";
             try {
                 $queryData = $this->db->query($query, array($value));
                 $this->dataSet = $queryData->result_array();
@@ -4054,7 +4054,16 @@ ORDER BY question_code";
                 $queryData->free_result();
                 
                 foreach ($this->dataSet as $value) {
-                    $data[$value['month']] = (int)$value['sum(ld_number)'];
+                    switch ($statistic) {
+                        case 'response':
+                           $data[$value['month']] = (int)$value['sum(ld_number)'];
+                            break;
+                        
+                        case 'response_raw':
+                           $data[]=(int)$value;
+                            break;
+                    }
+                    
                 }
                 
                 //echo "<pre>";print_r($this->dataSet);echo "</pre>";die;
