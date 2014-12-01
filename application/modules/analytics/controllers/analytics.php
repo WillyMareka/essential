@@ -3231,14 +3231,6 @@ class Analytics extends MY_Controller
     }
 
 
-    public function getDiarrhoeaRaw($criteria, $value, $survey, $survey_category, $statistics, $form) {
-        $results = $this->analytics_model->getDiarrhoeaStatistics($criteria, $value, $survey, $survey_category, 'response_raw');
-        
-        $results = $this->arrays->reset($results);
-        
-        echo $this->export->generate($results, 'Diarrhoea Statistics for ' . ucwords('waste') . '(' . $value . ')', $form);
-    }
-    
     /**
      * [getHCWProfileRaw description]
      * @param  [type] $criteria        [description]
