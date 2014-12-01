@@ -1476,6 +1476,9 @@ function statisticsHandler(criteria, value, survey, survey_category,
             value + '/' + survey + '/' + survey_category, '#24Hr');
           loadGraph(base_url, 'analytics/getHFM/' + criteria + '/' + value +
             '/' + survey + '/' + survey_category, '#HFM');
+          loadGraph(base_url, 'analytics/getNurses/' + criteria + '/' +
+            value + '/' + survey + '/' + survey_category ,
+            '#nurses');
           loadGraph(base_url, 'analytics/getBedStatistics/' + criteria + '/' +
             value + '/' + survey + '/' + survey_category + '/total',
             '#Beds');

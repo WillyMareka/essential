@@ -485,9 +485,13 @@ class MY_Model extends CI_Model
   */
   public function getSignalName($code) {
     try {
-      $this->result = $this->em->getRepository('models\Entities\signalFunctions')->findOneBy(array('sfCode' => $code));
-      $result = $this->result->getSfName();
-      return $result;
+      $result = $this->em->getRepository('models\Entities\signalFunctions')->findOneBy(array('sfCode' => $code));
+if($result){
+ $result = $this->result->getSfName(); 
+  return $result;
+}
+      
+     
       // var_dump($result);die;
 
 
@@ -778,6 +782,44 @@ class MY_Model extends CI_Model
   // print_r ($q);die;
       $result = $q->execute();
       return $result;
+    }
+
+    function getAssessmentInfo()
+    {
+      $sections = array();
+      $query = $this->db->query("SELECT COUNT(DISTINCT(ast_section)) as sections, hcw_id FROM hcw_assessment_tracker GROUP BY hcw_id");
+
+      $result = $query->result_array();
+
+      foreach ($result as $value) {
+        $sections[$value['hcw_id']] = $value['sections'];
+      }
+
+      return $sections;
+    }
+
+    public function getCountyData($county)
+    {
+      $data = array();
+      $query = $this->db->query("SELECT count(h.id) as hcws FROM hcw_list h
+        JOIN facilities f ON h.mfl_code = f.fac_mfl
+        WHERE f.fac_county = '".$county."' AND h.activity_id = 10
+        ");
+
+      $result = $query->result_array();
+      $data['hcws'] = $result[0]['hcws'];
+      //$data['assessed'] = $result->counts;
+      $options = array('QHC28'=>'Certified', 'QHC29' => 'Mentorship', 'QHC30' => 'TOT');
+
+      foreach ($options as $key => $value) {
+        $query = $this->db->query("SELECT count('q.lq_id') as counter FROM log_questions_hcw q 
+          JOIN facilities f ON f.fac_mfl = q.fac_mfl
+          WHERE q.question_code = '" . $key ."' AND f.fac_county = '".$county."' AND q.lq_response = 'Yes'");
+        $result = $query->result_array();
+
+        $data[$value] = $result[0]['counter'];
+      }
+      return $data;
     }
 
   }
