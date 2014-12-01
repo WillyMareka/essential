@@ -4327,9 +4327,6 @@ ORDER BY question_code";
                         $data[$value_['fac_tier']][$value_['response']] = (int)$value_['total_response'];
                             break;
 
-                        case 'hcwServiceUnit':
-                            $data[$value_['response']][$value_['serviceUnit_name']] = (int)$value_['total'];
-                            break;
 
                         case 'hcwServiceUnit_raw':
                             $data[] = $value_;
