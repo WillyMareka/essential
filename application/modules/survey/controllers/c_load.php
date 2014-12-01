@@ -947,7 +947,7 @@ class C_Load extends MY_Controller {
     <table class="centre">
         <thead>
             <tr>
-                <th colspan="13"  > HOW MANY STAFF MEMBERS HAVE BEEN TRAINED IN THE FOLLOWING?</th>
+                <th colspan="13"> HOW MANY STAFF MEMBERS HAVE BEEN TRAINED IN THE FOLLOWING?</th>
             </tr>
         </thead>
             <tr>

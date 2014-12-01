@@ -414,7 +414,7 @@ ORDER BY lq.lq_response ASC";
             
             $queryData->free_result();
             $result = $category = array();
-            
+            //echo "<pre>";print_r($this->dataSet);echo "</pre>";die;
             if ($this->dataSet !== NULL) {
                 foreach ($this->dataSet as $value) {
                     switch ($statistic) {
@@ -428,6 +428,7 @@ ORDER BY lq.lq_response ASC";
                             break;
                     }
                 }
+             //echo "<pre>";print_r($data);echo "</pre>";die;
             }
         }
         catch(exception $ex) {
@@ -1172,19 +1173,36 @@ WHERE
                                 }
                                 break;
 
+                            case 'findings_raw':
+                                $data[] = $value;
+                                break;
+
                             case 'hcwfindings':
                                 if (array_key_exists('frequency', $value)) {
                                     $data[$value['indicator_name']][$value['frequency']] = (int)$value['total_response'];
                                 }
                                 break;
 
+                            case 'hcwfindings_raw':
+                                $data[] = $value;
+                                break;
+
                             case 'hcwservice':
                                 $data[$value['indicator_name']][$value['li_hcwResponse']] = (int)$value['total'];
                                 
                                 break;
+                            
+                            case 'hcwservice_raw':
+                                $data[] = $value;
+                                break;
+
 
                             case 'hcwdangersigns':
                                 $data[$value['indicator_name']][$value['li_hcwFindings']] = (int)$value['total'];
+                                break;
+
+                            case 'hcwdangersigns_raw':
+                                $data[] = $value;
                                 break;
                         }
                         
@@ -1265,6 +1283,18 @@ WHERE
                             case 'hcwassessment':
                                 $data[$value['indicator_name']][$value['response']] = (int)$value['total'];
                                 break;
+
+                            case 'hcwcorrectness_raw':
+                                $data[] = $value_;
+                                break;
+
+                            case 'hcwclassification_raw':
+                                $data[] = $value_;
+                                break;
+
+                            case 'hcwassessment_raw':
+                                $data[] = $value_;
+                                break;
                         }
                     }
                     $this->dataSet = $data;
@@ -1275,7 +1305,7 @@ WHERE
                     return $this->dataSet = null;
                 }
                 
-                die(var_dump($this->dataSet));
+                //die(var_dump($this->dataSet));
             }
             catch(exception $ex) {
                 
@@ -1659,7 +1689,7 @@ GROUP BY tl.treatmentID ORDER BY tl.treatmentID ASC";
                     
                     //echo "<pre>";print_r($this->dataSet);echo "</pre>";die;
                     foreach ($this->dataSet as $value) {
-                        if ($statistic == 'availability_raw' || $statistic == 'unavailability_raw' || $statistic == 'location_raw') {
+                        if ($statistic == 'availability_raw' || $statistic == 'unavailability_raw' || $statistic == 'location_raw'|| $statistic == 'functionality_raw') {
                             $data[] = $value;
                         } else if (array_key_exists('frequency', $value)) {
                             $data[$value['equipment_name']][$value['frequency']] = (int)$value['total_response'];
@@ -1800,11 +1830,15 @@ GROUP BY tl.treatmentID ORDER BY tl.treatmentID ASC";
                 //echo($this->db->last_query());die;
                 if ($this->dataSet !== NULL) {
                     foreach ($this->dataSet as $value) {
+                        // echo "<pre>";print_r($this->dataSet);echo "</pre>";die;
                         switch ($statistic) {
                             case 'reason':
                                 $foundOptions = explode(',', $value['lcso_option_on_outage']);
+                                //echo "<pre>";print_r($foundOptions);echo "</pre>";die;
                                 foreach ($foundOptions as $option) {
-                                    $data['data'][$this->getCommodityOutageOptionName($option) ]+= $value['total'];
+
+                                    $data['data'][$this->getCommodityOutageOptionName($option) ]+= $value['lcso_option_on_outage'];
+                                    //echo "<pre>";print_r($data);echo "</pre>";die;
                                 }
                                 break;
 
@@ -1812,6 +1846,7 @@ GROUP BY tl.treatmentID ORDER BY tl.treatmentID ASC";
                                 $data['data'][] = $value;
                                 break;
                         }
+                       // echo "<pre>";print_r($data);echo "</pre>";die;
                     }
                     $commodities = $this->getCommodities();
                     foreach ($commodities as $commodity) {
@@ -1985,7 +2020,7 @@ GROUP BY tl.treatmentID ORDER BY tl.treatmentID ASC";
                     
                     //echo "<pre>";print_r($this->dataSet);echo "</pre>";die;
                     foreach ($this->dataSet as $value) {
-                        if ($statistic == 'availability_raw' || $statistic == 'quantity_raw' || $statistic == 'unavailability_raw' || $statistic == 'supplier_raw') {
+                        if ($statistic == 'availability_raw' || $statistic == 'quantity_raw' || $statistic == 'unavailability_raw' || $statistic == 'supplier_raw'|| $statistic == 'location_raw') {
                             $data[] = $value;
                         } else if (array_key_exists('frequency', $value)) {
                             switch ($for) {
@@ -2252,7 +2287,7 @@ LIMIT 0 , 1000
                                 $data[$value['equipment_name']][$place]+= (int)$value['total_response'];
                             }
                         }
-                        if (array_key_exists('fac_tier', $value)) {
+                        if (array_key_exists('fac_level', $value)) {
                             $data[$value['fac_tier']][$value['suppliers']] = (int)$value['total_response'];
                         }
                         if (array_key_exists('mainsource', $value)) {
@@ -3887,14 +3922,14 @@ ORDER BY question_code";
          *      .bemonc
          *      .cemonc
          */
-        public function getBemONCQuestion($criteria, $value, $survey, $survey_category) {
+        public function getBemONCQuestion($criteria, $value, $survey, $survey_category,$statistic) {
             $value = urldecode($value);
             $newData = array();
             
             /*using CI Database Active Record*/
             $data = $data_set = $data_series = $analytic_var = $data_categories = array();
             
-            $query = "CALL get_bemonc_question('" . $criteria . "','" . $value . "','" . $survey . "','" . $survey_category . "');";
+            $query = "CALL get_bemonc_question('" . $criteria . "','" . $value . "','" . $survey . "','" . $survey_category ."','" . $statistic . "');";
             try {
                 $this->dataSet = $this->db->query($query, array($value));
                 $this->dataSet = $this->dataSet->result_array();
@@ -3903,17 +3938,23 @@ ORDER BY question_code";
                 
                 foreach ($this->dataSet as $value_) {
                     
-                    //echo "<pre>";print_r($value_);echo "</pre>";
+                    //echo "<pre>";print_r($value_);echo "</pre>";die;
                     //print_r($this->dataSet);die;
                     $question = $this->getSignalName($value_['sf_code']);
+                    //echo "<pre>";print_r($question);echo "</pre>";die;
                     $code = $value_['sf_code'];
                     
                     if ($count < 3):
                         $question = substr($question, 18);
                     endif;
                     $count++;
+                    if($statistic=='response'){
+                        $data[$value_['sf_name']][$value_['response']] = (int)$value_['total'];
+                    }
+                    else{
+                        $data[]=$value_;
+                    }
                     
-                    $data[$question][$value_['response']] = (int)$value_['total'];
                     
                     //echo "<pre>";print_r($question);echo "</pre>";
                     // var_dump($value_['sf_code']);die;
@@ -3941,14 +3982,14 @@ ORDER BY question_code";
             return $data;
         }
         
-        public function getBemONCReason($criteria, $value, $survey, $survey_category) {
+        public function getBemONCReason($criteria, $value, $survey, $survey_category,$statistic) {
             $value = urldecode($value);
             $newData = array();
             
             /*using CI Database Active Record*/
             $data = $data_set = $data_series = $analytic_var = $data_categories = array();
             
-            $query = "CALL get_bemonc_reason('" . $criteria . "','" . $value . "','" . $survey . "','" . $survey_category . "');";
+            $query = "CALL get_bemonc_reason('" . $criteria . "','" . $value . "','" . $survey . "','" . $survey_category . "','" . $statistic . "');";
             try {
                 $queryData = $this->db->query($query, array($value));
                 $this->dataSet = $queryData->result_array();
@@ -3962,9 +4003,14 @@ ORDER BY question_code";
                     
                     //echo "<pre>";print_r($this->dataSet);echo "</pre>";die;
                     foreach ($this->dataSet as $value) {
+                        if($statistic=='response'){
                         if (array_key_exists('challenge', $value)) {
                             $data[$value['flevel']][$value['challenge']] = (int)$value['total_response'];
                         }
+                    }
+                    else{
+                        $data[]=$value;
+                    }   
                     }
                 }
                 
@@ -4106,7 +4152,7 @@ ORDER BY question_code";
                 // Dump the extra resultset.
                 $queryData->free_result();
 
-                //echo '<pre>';print_r($this->dataSet);echo '</pre>';die;
+               // echo '<pre>';print_r($this->dataSet);echo '</pre>';die;
 
                 foreach ($this->dataSet as $value_) {
                     if (array_key_exists('question_code', $value_)) {
@@ -4190,6 +4236,10 @@ ORDER BY question_code";
                             $data[$question][$value_['response']] = (int)$value_['total_response'];
                             break;
 
+                        case 'hcwresponse_raw':
+                            $data[] = $value_;
+                            break;
+
                         case 'total':
                             
                             //echo $question;
@@ -4230,8 +4280,16 @@ ORDER BY question_code";
                             $data[$value_['fac_tier']][$value_['response']] = (int)$value_['total'];
                             break;
 
+                         case 'hcwRetention_raw':
+                            $data[] = $value_;
+                            break;
+
                         case 'hcwTransfer':
                             $data[$value_['question_name']][$value_['response']] = (int)$value_['total'];
+                            break;
+
+                        case 'hcwTransfer_raw':
+                            $data[] = $value_;
                             break;
 
                         case 'supplier':
@@ -4242,12 +4300,17 @@ ORDER BY question_code";
                             $data[$value_['response']][$value_['serviceUnit_name']] = (int)$value_['total'];
                             break;
 
+                        case 'hcwServiceUnit_raw':
+                            $data[] = $value_;
+                            break;
+
                         case 'reason_raw':
                         case 'response_raw':
                         case 'total_raw':
                         case 'functionality_raw':
                             $data[] = $value_;
                             break;
+     
                     }
                 }
             }

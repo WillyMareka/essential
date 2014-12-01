@@ -1132,10 +1132,31 @@ function setRawUrl(criteria, county, district, facility, survey,
         raw_url = 'analytics/getQuestionRaw/' + criteria + '/' + value + '/' +
           survey + '/' + survey_category + '/' + data_for + '/' + statistic;
         break;
+      case 'service':
+        raw_url = 'analytics/getIndicatorServiceRaw/' + criteria + '/' + value + '/' +
+          survey + '/' + survey_category + '/' + data_for  + '/' + statistic;
+        break;
+      case 'danger':
+        raw_url = 'analytics/getIndicatorDangerRaw/' + criteria + '/' + value + '/' +
+          survey + '/' + survey_category + '/' + data_for  + '/' + statistic;
+        break;
+      case 'correctness':
+        raw_url = 'analytics/getIndicatorCorrectnessRaw/' + criteria + '/' + value + '/' +
+          survey + '/' + survey_category + '/' + data_for  + '/' + statistic;
+        break;
+      case 'classification':
+        raw_url = 'analytics/getIndicatorClassificationRaw/' + criteria + '/' + value + '/' +
+          survey + '/' + survey_category + '/' + data_for  + '/' + statistic;
+        break;
+      case 'assessment':
+        raw_url = 'analytics/getIndicatorAssessmentRaw/' + criteria + '/' + value + '/' +
+          survey + '/' + survey_category + '/' + data_for  + '/' + statistic;
+        break;
       case 'indicator':
         raw_url = 'analytics/getIndicatorRaw/' + criteria + '/' + value + '/' +
           survey + '/' + survey_category + '/' + data_for;
         break;
+
       case 'commodity':
         raw_url = 'analytics/getCommodityRaw/' + criteria + '/' + value + '/' +
           survey + '/' + survey_category + '/' + data_for + '/' + statistic;
@@ -1185,13 +1206,15 @@ function setRawUrl(criteria, county, district, facility, survey,
         raw_url = 'analytics/getTrainedStaffRAW/' + criteria + '/' + value + '/' +
           survey + '/' + survey_category + '/' + data_for;
         break;
-         case 'beds':
+
+      case 'beds':
         raw_url = 'analytics/getBedRaw/' + criteria + '/' + value + '/' +
           survey + '/' + survey_category + '/' + data_for+ '/' + statistic;
+
         break;
-        case 'diarrhoea':
-        raw_url = 'analytics/getDiarrhoeaStatisticsRaw/' + criteria + '/' + value + '/' +
-          survey + '/' + survey_category + '/' + data_for+ '/' + statistic;
+        case 'bemonc_question':
+        raw_url = 'analytics/getBemONCQuestionRAW/' + criteria + '/' + value + '/' +
+          survey + '/' + survey_category+ '/' + statistic;
         break;
     }
     return raw_url;
@@ -1442,6 +1465,9 @@ function statisticsHandler(criteria, value, survey, survey_category,
             value + '/' + survey + '/' + survey_category, '#24Hr');
           loadGraph(base_url, 'analytics/getHFM/' + criteria + '/' + value +
             '/' + survey + '/' + survey_category, '#HFM');
+          loadGraph(base_url, 'analytics/getNurses/' + criteria + '/' +
+            value + '/' + survey + '/' + survey_category ,
+            '#nurses');
           loadGraph(base_url, 'analytics/getBedStatistics/' + criteria + '/' +
             value + '/' + survey + '/' + survey_category + '/total',
             '#Beds');
@@ -1626,9 +1652,8 @@ function statisticsHandler(criteria, value, survey, survey_category,
           loadGraph(base_url, 'analytics/getTrainedStaff/' + criteria + '/' +
             value + '/' + survey + '/' + survey_category + '/' + survey,
             '#staff_training');
-          loadGraph(base_url, 'analytics/getStaffAvailability/' + criteria +
-            '/' + value + '/' + survey + '/' + survey_category + '/' +
-            survey, '#staff_availability');
+          loadGraph(base_url, 'analytics/getStaffAvailabilityCH/' + criteria +
+            '/' + value + '/' + survey + '/' + survey_category, '#staff_availability');
           //loadGraph(base_url, 'analytics/getStaffRetention/' + criteria + '/' + value + '/' + survey + '/' + survey_category + '/' + survey, '#staff_retention');
           loadGraph(base_url, 'analytics/getIMCI/' + criteria + '/' + value +
             '/' + survey + '/' + survey_category, '#imci');
@@ -1791,8 +1816,8 @@ function statisticsHandler(criteria, value, survey, survey_category,
             '/' + value + '/' + survey + '/' + survey_category +
             '/referral', '#chCases');
           loadGraph(base_url, 'analytics/getCommunityStrategyCH/' + criteria +
-            '/' + value + '/' + survey + '/' + survey_category + '/trained',
-            '#chIMCITraining');
+            '/' + value + '/' + survey + '/' + survey_category +
+             '/trained', '#chIMCITraining');
           break;
       }
       break;
