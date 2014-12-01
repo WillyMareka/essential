@@ -2865,7 +2865,7 @@ class Analytics extends MY_Controller
     public function getQuestionStatistics($criteria, $value, $survey, $survey_category, $for, $statistics) {
         $results = $this->analytics_model->getQuestionStatistics($criteria, $value, $survey, $survey_category, $for, $statistics);
 
-      // echo "<pre>";print_r($results);echo "</pre>";die;
+       //echo "<pre>";print_r($results);echo "</pre>";die;
         if(($statistics == 'functionality' && $for == 'ortf') || ($statistics == 'supplier' && $for == 'mnhw')){
             $number = $resultArray = $q = $data= $gdata =array();
         foreach ($results as $key => $value) {
@@ -2953,10 +2953,11 @@ class Analytics extends MY_Controller
             }
             $category = $q;
             $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 110, 'bar', '', $for, 'question', $statistics);
-        } else if ($statistics == 'response' && $for == 'wp') {
+        } else if (($statistics == 'response' && $for == 'wp')) {
             $number = $resultArray = $q = $data = $gdata = $res = array();
             $number = $resultArray = $q = $yes = $no = $null = array();
             foreach ($results as $key => $value) {
+                //echo "<pre>";print_r($value);echo "</pre>";die;
                 if ($count == 0):
                     
                     $q[] = $key;
@@ -3111,9 +3112,18 @@ class Analytics extends MY_Controller
             var_dump($resultArray);
             $colors = array('#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970', '#f28f43', '#77a1e5', '#c42525', '#dddddd');
             $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 90, 'bar', '', $for, 'question', $statistics, $colors);
-        }
-
-        else {
+        }else if($statistics == 'total' && $for == 'nur'){
+             $number = $resultArray = $q = $data = $gdata = $res = array();
+            $number = $resultArray = $q = $yes = $no = $null = array();
+            foreach ($results as $key => $value) {
+               // echo "<pre>";print_r($value);echo "</pre>";die;
+                $category[] = $key;
+                $gData[]=(int)$value;
+            }
+            $resultArray[]=array('name' => 'Skilled Birth Attendants','data' => $gData);
+            //echo "<pre>";print_r($resultArray);echo "</pre>";die;
+            $this->populateGraph($resultArray, '', $category, $criteria, '', 90, 'bar', '', $for, 'question', $statistics, $colors);
+        }else {
             $number = $resultArray = $q = $data = $gdata = $res = array();
             $number = $resultArray = $q = $yes = $no = $null = array();
             foreach ($results as $key => $value) {
@@ -3463,19 +3473,28 @@ class Analytics extends MY_Controller
     
     }*/
     
-    public function getDiarrhoeaStatistics($criteria, $value, $survey, $survey_category, $statistics) {
-        $results = $this->analytics_model->getDiarrhoeaStatistics($criteria, $value, $survey, $survey_category,$statistics, 'waste');
+
+    public function getDiarrhoeaStatistics($criteria, $value, $survey, $survey_category,$statistic) {
+        $results = $this->analytics_model->getDiarrhoeaStatistics($criteria, $value, $survey, $survey_category,'response');
+
         
-        // echo "<pre>";print_r($results);echo "</pre>";die;
+        //echo "<pre>";print_r($results);echo "</pre>";die;
         foreach ($results as $key => $value) {
             $category[] = ucwords($key);
             $gData[] = $value;
         }
         $resultArray[] = array('name' => 'Numbers', 'data' => $gData);
-        $this->populateGraph($resultArray, '', $category, $criteria, '', 70, 'bar', '', $for, 'diarrhoea', $statistics);
-        //$this->populateGraph($resultArray, '', $category, $criteria, '', 70, 'bar', '', $for, 'waste', $statistics);
+
+        
+        $this->populateGraph($resultArray, '', $category, $criteria, '', 70, 'bar', '','','','diarrhoea', '');
     }
-    
+     public function getDiarrhoeaRaw($criteria, $value, $survey, $survey_category,$statistic, $form) {
+           $results = $this->analytics_model->getDiarrhoeaStatistics($criteria, $value, $survey, $survey_category,'response_raw');
+          //echo "<pre>";print_r($results);echo "</pre>";die;
+        $results = $this->arrays->reset($results);
+      echo $this->export->generate($results, 'Diarrhoea Statistics for' . ucwords($for) . '(' . $value . ')', $form);
+
+    }
     /**
      * [getWasteStatistics description]
      * @param  [type] $criteria        [description]
@@ -5328,15 +5347,17 @@ class Analytics extends MY_Controller
      *      .cemonc
      */
     
-    public function getBemONCQuestion($criteria, $value, $survey, $survey_category, $statistics) {
+
+    public function getBemONCQuestion($criteria, $value, $survey, $survey_category,$statistic) {
         $number = $resultArray = $q = array();
         $number = $resultArray = $q = $gData = array();
-
-        $results = $this->analytics_model->getBemONCQuestion($criteria, $value, $survey, $survey_category,'response');
-
         $number = $resultArray = $q = $data = $gdata = $res = array();
         $number = $resultArray = $q = $yes = $no = $null = array();
+        $results = $this->analytics_model->getBemONCQuestion($criteria, $value, $survey, $survey_category,'response');
+        
+       // echo "<pre>";print_r($results);echo "</pre>";die;
         foreach ($results as $key => $value) {
+
             $q[] = $key;
             $data[] = $value;
         }
@@ -5348,7 +5369,8 @@ class Analytics extends MY_Controller
         $colors = array('#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970', '#f28f43', '#77a1e5', '#c42525', '#dddddd');
         $colorCounter = 0;
         foreach ($gdata as $name => $value1) {
-            if ($name == 'No data') {
+            if ($name == '') {
+                $name = 'No data';
                 $color = '#dddddd';
             } else if ($name == 'Yes') {
                 $color = '#8bbc21';
@@ -5361,8 +5383,9 @@ class Analytics extends MY_Controller
             $resultArray[] = array('name' => $name, 'data' => $value1, 'color' => $color);
         }
         $category = $q;
-        $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 90, 'bar', '', 'bemresponse', $statistics);
-        //$this->populateGraph($resultArray, '', $category, $criteria, 'percent', 90, 'bar');
+
+        $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 90, 'bar','','','bemonc_question','','response');
+
     }
     
 
@@ -5370,10 +5393,7 @@ class Analytics extends MY_Controller
  $results = $this->analytics_model->getBemONCQuestion($criteria, $value, $survey, $survey_category,'response_raw');
           // echo "<pre>";print_r($results);echo "</pre>";die;
         $results = $this->arrays->reset($results);
-      
-
-        
-        echo $this->export->generate($results, 'BEMONC Statistics for' . ucwords($for) . '(' . $value . ')', $form);
+       echo $this->export->generate($results, 'BEMONC Statistics for' . ucwords($for) . '(' . $value . ')', $form);
     }
 
     public function getBemONCReasonRAW($criteria, $value, $survey, $survey_category,$form){

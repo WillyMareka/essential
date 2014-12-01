@@ -1222,10 +1222,14 @@ function setRawUrl(criteria, county, district, facility, survey,
           survey + '/' + survey_category + '/' + data_for;
         break;
 
-         case 'beds':
+      case 'beds':
         raw_url = 'analytics/getBedRaw/' + criteria + '/' + value + '/' +
           survey + '/' + survey_category + '/' + data_for+ '/' + statistic;
 
+        break;
+        case 'bemonc_question':
+        raw_url = 'analytics/getBemONCQuestionRAW/' + criteria + '/' + value + '/' +
+          survey + '/' + survey_category+ '/' + statistic;
         break;
     }
     return raw_url;

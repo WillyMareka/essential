@@ -2266,7 +2266,7 @@ class Generate extends MY_Controller
                         }
                         $titles[] = 'Total Staff Members Still Working';
                         
-                        // echo '<pre>';print_r($titles);echo '</pre>';die;
+                        echo '<pre>';print_r($titles);echo '</pre>';die;
                         
                         foreach ($staff as $member) {
                             $counter++;

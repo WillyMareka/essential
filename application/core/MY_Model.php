@@ -486,9 +486,9 @@ class MY_Model extends CI_Model
   public function getSignalName($code) {
     try {
       $result = $this->em->getRepository('models\Entities\signalFunctions')->findOneBy(array('sfCode' => $code));
-if($result){
- $result = $this->result->getSfName(); 
-  return $result;
+              if($this->$result != NULL){
+               $result = $this->result->getSfName(); 
+                return $result;
 }
       
      
@@ -497,7 +497,7 @@ if($result){
 
     }
     catch(exception $ex) {
-      print_r($ex);
+      //print_r($ex);
     }
 
   }

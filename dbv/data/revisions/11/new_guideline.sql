@@ -1,0 +1,1 @@
+INSERT INTO `mnh_rest`.`guidelines` (`guide_id`, `guide_code`, `guide_name`, `guide_for`) VALUES (NULL, 'GNC14', 'EID sample collection training', 'ch');

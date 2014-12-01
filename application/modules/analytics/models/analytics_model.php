@@ -3948,9 +3948,10 @@ ORDER BY question_code";
                 
                 foreach ($this->dataSet as $value_) {
                     
-                    //echo "<pre>";print_r($value_);echo "</pre>";
+                    //echo "<pre>";print_r($value_);echo "</pre>";die;
                     //print_r($this->dataSet);die;
                     $question = $this->getSignalName($value_['sf_code']);
+                    //echo "<pre>";print_r($question);echo "</pre>";die;
                     $code = $value_['sf_code'];
                     
                     if ($count < 3):
@@ -3958,7 +3959,7 @@ ORDER BY question_code";
                     endif;
                     $count++;
                     if($statistic=='response'){
-                        $data[$question][$value_['response']] = (int)$value_['total'];
+                        $data[$value_['sf_name']][$value_['response']] = (int)$value_['total'];
                     }
                     else{
                         $data[]=$value_;
@@ -4105,13 +4106,17 @@ ORDER BY question_code";
          * @param  [type] $survey_category [description]
          * @return [type]                  [description]
          */
-        public function getDiarrhoeaStatistics($criteria, $value, $survey, $survey_category, $statistics) {
+
+        public function getDiarrhoeaStatistics($criteria, $value, $survey, $survey_category,$statistic) {
+
             
             /*using CI Database Active Record*/
             $value = urldecode($value);
             $data = array();
             
-            $query = "CALL get_diarrhoea_statistics('" . $criteria . "','" . $value . "','" . $survey . "','" . $survey_category . "','" . $statistics . "');";
+
+            $query = "CALL get_diarrhoea_statistics('" . $criteria . "','" . $value . "','" . $survey . "','" . $survey_category . "','" . $statistic . "');";
+
             try {
                 $queryData = $this->db->query($query, array($value));
                 $this->dataSet = $queryData->result_array();
@@ -4124,22 +4129,16 @@ ORDER BY question_code";
                 
                 foreach ($this->dataSet as $value) {
 
-                    switch ($statistics) {
-                       
-                         case 'response':
-                              $data[$value['month']] = (int)$value['sum(ld_number)'];
-                              break;
-
-                        case 'response_raw':
-                            $data[] = $value_;
+                    switch ($statistic) {
+                        case 'response':
+                           $data[$value['month']] = (int)$value['sum(ld_number)'];
                             break;
-
-     
+                        
+                        case 'response_raw':
+                           $data[]=(int)$value;
+                            break;
                     }
-
-
-                   
-
+                    
 
                 }
                 
@@ -4183,7 +4182,7 @@ ORDER BY question_code";
                 // Dump the extra resultset.
                 $queryData->free_result();
 
-                //echo '<pre>';print_r($this->dataSet);echo '</pre>';die;
+               // echo '<pre>';print_r($this->dataSet);echo '</pre>';die;
 
                 foreach ($this->dataSet as $value_) {
                     if (array_key_exists('question_code', $value_)) {

@@ -972,14 +972,14 @@ class Form_Handler extends MY_Controller
 <table class="centre">
 		<thead>
 			<tr>
-				<th colspan="15"  > HOW MANY STAFF MEMBERS HAVE BEEN TRAINED IN THE FOLLOWING?</th>
+				<th colspan="15"> HOW MANY STAFF MEMBERS HAVE BEEN TRAINED IN THE FOLLOWING?</th>
 			</tr>
 			<tr>
 
 				<th rowspan ="2" style="text-align:left"> Clinical Staff</th>
 				<th rowspan ="2" style="text-align:left">Total in Facility</th>
 				<th rowspan ="2" style="text-align:left">Total Available On Duty</th>
-				<th colspan="2" ># of Staff Trained in IMCI</th>
+				<th colspan="2"># of Staff Trained in IMCI</th>
 				<th colspan="2"># of Staff Trained in ICCM</th>
 				<th colspan="2"># of Staff Trained in Enhanced Diarrhoea Management</th>
 				<th colspan="2"># of Staff Trained in Diarrhoea and Pnemonia CMEs for U5s</th>
@@ -999,6 +999,7 @@ class Form_Handler extends MY_Controller
 				<th style="text-align:left">AFTER 2014</th>
 				<th style="text-align:left">BEFORE 2010</th>
 				<th style="text-align:left">AFTER 2010</th>
+				
 			</tr>
 		</thead>
 		'.$this->staffTraining.'
