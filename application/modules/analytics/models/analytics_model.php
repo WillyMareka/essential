@@ -4023,17 +4023,14 @@ ORDER BY question_code";
 
                             $data[$value['flevel']][$value['challenge']] = (int)$value['total_response'];
                         }
-                              break;
+                             
 
-                        case 'reason_raw':
-                            $data[] = $value;
-                            break;
 
      
                     }
 
                         
-                    }
+                    
                     else{
                         $data[]=$value;
                     }   

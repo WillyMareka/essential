@@ -3276,23 +3276,9 @@ class Analytics extends MY_Controller
     }
 
 
-    public function getBEMONCRaw($criteria, $value, $survey, $survey_category, $statistics, $form) {
-        $results = $this->analytics_model->getBemONCQuestion($criteria, $value, $survey, $survey_category, 'response_raw');
-        
-        //echo "<pre>";print_r($results);echo "</pre>";die;
-        $results = $this->arrays->reset($results);
 
-        echo $this->export->generate($results, 'BEMONC Response for' . ucwords('BEMONC') . '(' . $value . ')', $form);
-    }
 
-    public function getBEMONCREASONRaw($criteria, $value, $survey, $survey_category, $statistics, $form) {
-        $results = $this->analytics_model->getBemONCReason($criteria, $value, $survey, $survey_category, 'reason_raw');
-        
-        //echo "<pre>";print_r($results);echo "</pre>";die;
-        $results = $this->arrays->reset($results);
-
-        echo $this->export->generate($results, 'BEMONC Reason for' . ucwords('BEMONC') . '(' . $value . ')', $form);
-    }
+    
     
 
     /**
