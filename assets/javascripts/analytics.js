@@ -1210,11 +1210,21 @@ function setRawUrl(criteria, county, district, facility, survey,
       case 'beds':
         raw_url = 'analytics/getBedRaw/' + criteria + '/' + value + '/' +
           survey + '/' + survey_category + '/' + data_for+ '/' + statistic;
-
         break;
-        case 'bemonc_question':
+
+      case 'bemonc_question':
         raw_url = 'analytics/getBemONCQuestionRAW/' + criteria + '/' + value + '/' +
-          survey + '/' + survey_category+ '/' + statistic;
+          survey + '/' + survey_category + '/' + statistic;
+        break;
+
+      case 'diarrhoea':
+        raw_url = 'analytics/getDiarrhoeaRaw/' + criteria + '/' + value + '/' +
+          survey + '/' + survey_category + '/' + statistic;
+        break;
+
+      case 'bemonc_reason':
+        raw_url = 'analytics/getBemONCReasonRAW/' + criteria + '/' + value + '/' +
+          survey + '/' + survey_category + '/' + statistic;
         break;
     }
     return raw_url;

@@ -485,17 +485,14 @@ class MY_Model extends CI_Model
   */
   public function getSignalName($code) {
     try {
-      $result = $this->em->getRepository('models\Entities\signalFunctions')->findOneBy(array('sfCode' => $code));
-              if($this->$result != NULL){
+      $result = $this->em->getRepository('models\Entities\signalFunctions')->findOneBy(array('sfId' => $code));
+             //var_dump($result);die;
+              if($result != NULL){
                $result = $this->result->getSfName(); 
                 return $result;
-}
-      
-     
+         }
       // var_dump($result);die;
-
-
-    }
+          }
     catch(exception $ex) {
       //print_r($ex);
     }

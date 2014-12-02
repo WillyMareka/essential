@@ -103,9 +103,10 @@ CASE criteria
 
 WHEN 'national' THEN
 SELECT 
-    f.fac_name,
-    f.fac_district,
     f.fac_county,
+    f.fac_district,
+    f.fac_name,
+    f.fac_tier,
     sf.sf_name as signal_name,
     bf.bem_conducted as conducted
 FROM
@@ -125,9 +126,10 @@ FROM
 ORDER BY fac_county , fac_district , fac_name;
 WHEN 'county' THEN
 SELECT 
-    f.fac_name,
-    f.fac_district,
     f.fac_county,
+    f.fac_district,
+    f.fac_name,
+    f.fac_tier,
     sf.sf_name as signal_name,
     bf.bem_conducted as conducted
 FROM
@@ -147,9 +149,10 @@ FROM
 ORDER BY fac_county , fac_district , fac_name;
 WHEN 'district' THEN
 SELECT 
-    f.fac_name,
-    f.fac_district,
     f.fac_county,
+    f.fac_district,
+    f.fac_name,
+    f.fac_tier,
     sf.sf_name as signal_name,
     bf.bem_conducted as conducted
 FROM
@@ -169,9 +172,10 @@ FROM
 ORDER BY fac_county , fac_district , fac_name;
 WHEN 'facility' THEN
 SELECT 
-    f.fac_name,
-    f.fac_district,
     f.fac_county,
+    f.fac_district,
+    f.fac_name,
+    f.fac_tier,
     sf.sf_name as signal_name,
     bf.bem_conducted as conducted
 FROM

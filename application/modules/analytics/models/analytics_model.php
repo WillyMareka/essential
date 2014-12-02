@@ -3691,7 +3691,7 @@ ORDER BY question_code";
                     
                 }
                 
-                //die(var_dump($this->dataSet));
+                //die(var_dump($data));
                 
                 
             }
@@ -3934,7 +3934,7 @@ ORDER BY question_code";
                 $this->dataSet = $this->db->query($query, array($value));
                 $this->dataSet = $this->dataSet->result_array();
                 
-                // echo "<pre>";print_r($this->dataSet);echo "</pre>";
+                //echo "<pre>";print_r($this->dataSet);echo "</pre>";
                 
                 foreach ($this->dataSet as $value_) {
                     
@@ -3948,15 +3948,19 @@ ORDER BY question_code";
                         $question = substr($question, 18);
                     endif;
                     $count++;
-                    if($statistic=='response'){
+                    switch ($statistic) {
+                        case 'response':
                         $data[$value_['sf_name']][$value_['response']] = (int)$value_['total'];
-                    }
-                    else{
-                        $data[]=$value_;
+                            break;
+                        
+                        case 'response_raw':
+                            $data[]=$value_;
+                            break;
                     }
                     
                     
-                    //echo "<pre>";print_r($question);echo "</pre>";
+                    
+                    //echo "<pre>";print_r($data);echo "</pre>";die;
                     // var_dump($value_['sf_code']);die;
                     
                     // $yes = $value_['yes_values'];
@@ -4003,18 +4007,22 @@ ORDER BY question_code";
                     
                     //echo "<pre>";print_r($this->dataSet);echo "</pre>";die;
                     foreach ($this->dataSet as $value) {
-                        if($statistic=='response'){
-                        if (array_key_exists('challenge', $value)) {
+                        switch ($statistic) {
+                            case 'response':
+                            if (array_key_exists('challenge', $value)) {
                             $data[$value['flevel']][$value['challenge']] = (int)$value['total_response'];
                         }
-                    }
-                    else{
-                        $data[]=$value;
-                    }   
+                                break;
+                            
+                            case 'response_raw':
+                                $data[]=$value;
+                                break;
+                        }
+                        
                     }
                 }
                 
-                // echo "<pre>";print_r($this->dataSet);echo "</pre>";die;
+                 //echo "<pre>";print_r($data);echo "</pre>";die;
                 
                 
             }
@@ -4100,19 +4108,20 @@ ORDER BY question_code";
                 $queryData->free_result();
                 
                 foreach ($this->dataSet as $value) {
+                     //echo "<pre>";print_r($value);echo "</pre>";die;
                     switch ($statistic) {
                         case 'response':
                            $data[$value['month']] = (int)$value['sum(ld_number)'];
                             break;
                         
                         case 'response_raw':
-                           $data[]=(int)$value;
+                           $data[]=$value;
                             break;
                     }
                     
                 }
                 
-                //echo "<pre>";print_r($this->dataSet);echo "</pre>";die;
+                //echo "<pre>";print_r($value);echo "</pre>";die;
                 //die(var_dump($this->dataSet));
                 
                 
@@ -4308,6 +4317,7 @@ ORDER BY question_code";
                         case 'response_raw':
                         case 'total_raw':
                         case 'functionality_raw':
+                        case 'mainsource_raw':
                             $data[] = $value_;
                             break;
      

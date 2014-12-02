@@ -3469,7 +3469,7 @@ class Analytics extends MY_Controller
         }
         $resultArray[] = array('name' => 'Numbers', 'data' => $gData);
         
-        $this->populateGraph($resultArray, '', $category, $criteria, '', 70, 'bar', '','','','diarrhoea', '');
+        $this->populateGraph($resultArray, '', $category, $criteria, '', 70, 'bar', '','','diarrhoea','', '');
     }
      public function getDiarrhoeaRaw($criteria, $value, $survey, $survey_category,$statistic, $form) {
            $results = $this->analytics_model->getDiarrhoeaStatistics($criteria, $value, $survey, $survey_category,'response_raw');
@@ -4708,11 +4708,15 @@ class Analytics extends MY_Controller
         //echo '<pre>';print_r($results);echo '</pre>';die;
         $resultArray = array();
         foreach ($results as $value) {
-
+            //echo '<pre>';print_r($value);echo '</pre>';die;
             
             //$data = array();
+            if($value['facilityLevel'] == ''){
+                $name = 'No Tier Specified'. $value['facilityLevel'];;
+            }else{
+               $name = 'Tier ' . $value['facilityLevel']; 
+            }
             
-            $name = 'Tier ' . $value['facilityLevel'];
             
             //echo '<pre>';print_r($name);echo '</pre>';die;
 
@@ -5357,23 +5361,14 @@ class Analytics extends MY_Controller
         $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 90, 'bar','','','bemonc_question','','response');
     }
     
-    public function getBemONCQuestionRAW($criteria, $value, $survey, $survey_category,$form){
- $results = $this->analytics_model->getBemONCQuestion($criteria, $value, $survey, $survey_category,'response_raw');
-          // echo "<pre>";print_r($results);echo "</pre>";die;
+    public function getBemONCQuestionRAW($criteria, $value, $survey, $survey_category,$statistic,$form){
+      $results = $this->analytics_model->getBemONCQuestion($criteria, $value, $survey, $survey_category,'response_raw');
+           //echo "<pre>";print_r($results);echo "</pre>";die;
         $results = $this->arrays->reset($results);
-       echo $this->export->generate($results, 'BEMONC Statistics for' . ucwords($for) . '(' . $value . ')', $form);
+       echo $this->export->generate($results, 'BEMONC Question Statistics for' . ucwords($for) . '(' . $value . ')', $form);
     }
 
-    public function getBemONCReasonRAW($criteria, $value, $survey, $survey_category,$form){
- $results = $this->analytics_model->getBemONCReason($criteria, $value, $survey, $survey_category,'response_raw');
-          // echo "<pre>";print_r($results);echo "</pre>";die;
-        $results = $this->arrays->reset($results);
-      
-
-        
-        echo $this->export->generate($results, 'BEMONC Statistics for' . ucwords($for) . '(' . $value . ')', $form);
-    }
-    public function getBemONCReason($criteria, $value, $survey, $survey_category) {
+    public function getBemONCReason($criteria, $value, $survey, $survey_category,$statistic) {
         $results = $this->analytics_model->getBemONCReason($criteria, $value, $survey, $survey_category,'response');
         
         //echo "<pre>"; print_r($results);echo "</pre>";die;
@@ -5410,15 +5405,18 @@ class Analytics extends MY_Controller
         }
         
         //echo "<pre>"; print_r($resultArray);echo "</pre>";die;
-        $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 120, 'bar');
+        $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 120, 'bar','','','bemonc_reason','','');
     }
     
+    public function getBemONCReasonRAW($criteria, $value, $survey, $survey_category,$statistic,$form){
+    $results = $this->analytics_model->getBemONCReason($criteria, $value, $survey, $survey_category,'response_raw');
+        $results = $this->arrays->reset($results);
+       // echo '<pre>';print_r($results);echo '</pre>';die ;
+        echo $this->export->generate($results, 'BEMONC Reason Statistics for' . ucwords($for) . '(' . $value . ')', $form);
+    }
     public function getSignalFunction($criteria, $value, $survey, $survey_category, $function) {
         $results['conducted'] = array();
         $results = $this->analytics_model->getSignalFunction($criteria, $value, $survey, $survey_category, $function);
-        
-        //echo '<pre>';print_r($results);echo '</pre>';die ;
-        
         $number = $q = $resultArray = $yes = $no = array();
         foreach ($results['conducted'] as $key => $value) {
             $q[] = $key;
