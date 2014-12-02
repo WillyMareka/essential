@@ -4728,12 +4728,11 @@ class Analytics extends MY_Controller
         //echo '<pre>';print_r($results);echo '</pre>';die;
         $resultArray = array();
         foreach ($results as $value) {
-
-            
-            //$data = array();
-            
-            $name = 'Tier ' . $value['facilityLevel'];
-            
+            if($value['facilityLevel'] == ''){
+               $name = 'No Tier Specified' . $value['facilityLevel']; 
+            }else{
+               $name = 'Tier ' . $value['facilityLevel']; 
+            }
             //echo '<pre>';print_r($name);echo '</pre>';die;
 
             //$gData[] = (int)$value['level_total'];
@@ -5666,7 +5665,7 @@ class Analytics extends MY_Controller
                 }
             }
             $resultArray[] = array('name' => 'Response', 'data' => $gData);
-            $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 130, 'pie', '', $for, 'question', $statistics, $color);
+            $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 90, 'pie', '', $for, 'question', $statistics, $color);
             //$this->populateGraph($resultArray, '', $category, $criteria, 'percent', 120, 'bar');
         }
     }
