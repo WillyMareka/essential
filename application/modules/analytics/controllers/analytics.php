@@ -5642,21 +5642,14 @@ class Analytics extends MY_Controller
 
 
                 $category[] = $key;
-                $colors = array('#0d233a','#2f7ed8', '#8bbc21', '#910000', '#1aadce', '#492970', '#f28f43', '#77a1e5', '#c42525', '#dddddd');
-                $colorCounter = 0;
+                
                 foreach ($result as $name => $value) {
-                    if ($k == 'N/A') {
-                        $name = 'Not Available';
-                        $k = $name;
-                        $color = '#f66c6f';
-                    } else if ($k == '') {
-                        $name = 'No data';
-                        $k = $name;
+                    if ($name == 'Yes') {
+                        $color = '#8bbc21';
+                    }elseif ($name == 'No') {
+                        $color = '#fb4347';
+                    }elseif ($name == 'No data') {
                         $color = '#dddddd';
-                    } else if ($k == 'Pharmacy') {
-                        $color = '#0d233a';
-                    } else if ($k == 'Not-Available' || $k == 'Expired') {
-                        $color = '#f66c6f';
                     } else {
                         $color = $colors[$colorCounter];
                         $colorCounter++;
