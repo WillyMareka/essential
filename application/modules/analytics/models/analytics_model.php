@@ -4231,6 +4231,17 @@ ORDER BY question_code";
                             $question = substr($question, 0, -1);
                             break;
 
+                        case 'obs':
+                            $question = substr($question, 4);
+                            $question = trim($question, 'provider');
+                            // $question = substr($question, 0, -1);
+                            break;
+
+                        case 'int':
+                            $question = substr($question, 4);
+                            //$question = trim($question, 'provider');
+                            break;
+
                         case 'kang':
                             $question = substr($question, 0, -1);
                             break;
