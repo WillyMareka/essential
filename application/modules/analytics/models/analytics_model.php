@@ -1283,17 +1283,20 @@ WHERE
                             case 'hcwassessment':
                                 $data[$value['indicator_name']][$value['response']] = (int)$value['total'];
                                 break;
-
+                           
                             case 'hcwcorrectness_raw':
-                                $data[] = $value_;
+                                $data[] = $value;
+                                //echo '<pre>';print_r($this->dataSet);echo '</pre>';die;
                                 break;
-
+                            
                             case 'hcwclassification_raw':
-                                $data[] = $value_;
+                                $data[] = $value;
+                                //echo '<pre>';print_r($this->dataSet);echo '</pre>';die;
                                 break;
 
                             case 'hcwassessment_raw':
-                                $data[] = $value_;
+                                $data[] = $value;
+                                //echo '<pre>';print_r($this->dataSet);echo '</pre>';die;
                                 break;
                         }
                     }
@@ -2818,7 +2821,7 @@ ORDER BY f.fac_county ASC;";
          */
         public function runMap($survey, $survey_category, $statistic) {
             $myData = array();
-            $counties = $this->getAllCountyNames();
+            $counties = $this->getCounties();
             foreach ($counties as $county) {
                 $countyName = $county['countyName'];
                 
@@ -3691,7 +3694,7 @@ ORDER BY question_code";
                     
                 }
                 
-                //die(var_dump($data));
+                //die(var_dump($this->dataSet));
                 
                 
             }
@@ -3922,19 +3925,23 @@ ORDER BY question_code";
          *      .bemonc
          *      .cemonc
          */
+
         public function getBemONCQuestion($criteria, $value, $survey, $survey_category,$statistic) {
+
             $value = urldecode($value);
             $newData = array();
             
             /*using CI Database Active Record*/
             $data = $data_set = $data_series = $analytic_var = $data_categories = array();
             
+
             $query = "CALL get_bemonc_question('" . $criteria . "','" . $value . "','" . $survey . "','" . $survey_category ."','" . $statistic . "');";
+
             try {
                 $this->dataSet = $this->db->query($query, array($value));
                 $this->dataSet = $this->dataSet->result_array();
                 
-                //echo "<pre>";print_r($this->dataSet);echo "</pre>";
+                // echo "<pre>";print_r($this->dataSet);echo "</pre>";
                 
                 foreach ($this->dataSet as $value_) {
                     
@@ -3948,19 +3955,16 @@ ORDER BY question_code";
                         $question = substr($question, 18);
                     endif;
                     $count++;
-                    switch ($statistic) {
-                        case 'response':
+                    if($statistic=='response'){
                         $data[$value_['sf_name']][$value_['response']] = (int)$value_['total'];
-                            break;
-                        
-                        case 'response_raw':
-                            $data[]=$value_;
-                            break;
                     }
+                    else{
+                        $data[]=$value_;
+                    }
+
+
                     
-                    
-                    
-                    //echo "<pre>";print_r($data);echo "</pre>";die;
+                    //echo "<pre>";print_r($question);echo "</pre>";
                     // var_dump($value_['sf_code']);die;
                     
                     // $yes = $value_['yes_values'];
@@ -3986,14 +3990,18 @@ ORDER BY question_code";
             return $data;
         }
         
+
         public function getBemONCReason($criteria, $value, $survey, $survey_category,$statistic) {
+
             $value = urldecode($value);
             $newData = array();
             
             /*using CI Database Active Record*/
             $data = $data_set = $data_series = $analytic_var = $data_categories = array();
             
+
             $query = "CALL get_bemonc_reason('" . $criteria . "','" . $value . "','" . $survey . "','" . $survey_category . "','" . $statistic . "');";
+
             try {
                 $queryData = $this->db->query($query, array($value));
                 $this->dataSet = $queryData->result_array();
@@ -4007,22 +4015,27 @@ ORDER BY question_code";
                     
                     //echo "<pre>";print_r($this->dataSet);echo "</pre>";die;
                     foreach ($this->dataSet as $value) {
-                        switch ($statistic) {
-                            case 'response':
-                            if (array_key_exists('challenge', $value)) {
+
+                        if($statistic=='response'){
+                        if (array_key_exists('challenge', $value)) {
+
                             $data[$value['flevel']][$value['challenge']] = (int)$value['total_response'];
                         }
-                                break;
-                            
-                            case 'response_raw':
-                                $data[]=$value;
-                                break;
-                        }
+                             
+
+
+     
+                    }
+
                         
+                    
+                    else{
+                        $data[]=$value;
+                    }   
                     }
                 }
                 
-                 //echo "<pre>";print_r($data);echo "</pre>";die;
+                // echo "<pre>";print_r($this->dataSet);echo "</pre>";die;
                 
                 
             }
@@ -4090,13 +4103,17 @@ ORDER BY question_code";
          * @param  [type] $survey_category [description]
          * @return [type]                  [description]
          */
+
         public function getDiarrhoeaStatistics($criteria, $value, $survey, $survey_category,$statistic) {
+
             
             /*using CI Database Active Record*/
             $value = urldecode($value);
             $data = array();
             
+
             $query = "CALL get_diarrhoea_statistics('" . $criteria . "','" . $value . "','" . $survey . "','" . $survey_category . "','" . $statistic . "');";
+
             try {
                 $queryData = $this->db->query($query, array($value));
                 $this->dataSet = $queryData->result_array();
@@ -4108,20 +4125,21 @@ ORDER BY question_code";
                 $queryData->free_result();
                 
                 foreach ($this->dataSet as $value) {
-                     //echo "<pre>";print_r($value);echo "</pre>";die;
+
                     switch ($statistic) {
                         case 'response':
                            $data[$value['month']] = (int)$value['sum(ld_number)'];
                             break;
                         
                         case 'response_raw':
-                           $data[]=$value;
+                           $data[]=(int)$value;
                             break;
                     }
                     
+
                 }
                 
-                //echo "<pre>";print_r($value);echo "</pre>";die;
+                //echo "<pre>";print_r($this->dataSet);echo "</pre>";die;
                 //die(var_dump($this->dataSet));
                 
                 
@@ -4211,6 +4229,17 @@ ORDER BY question_code";
                             $question = substr($question, 18);
                             $question = trim($question, 'have a');
                             $question = substr($question, 0, -1);
+                            break;
+
+                        case 'obs':
+                            $question = substr($question, 4);
+                            $question = trim($question, 'provider');
+                            // $question = substr($question, 0, -1);
+                            break;
+
+                        case 'int':
+                            $question = substr($question, 4);
+                            //$question = trim($question, 'provider');
                             break;
 
                         case 'kang':
@@ -4305,19 +4334,21 @@ ORDER BY question_code";
                         $data[$value_['fac_tier']][$value_['response']] = (int)$value_['total_response'];
                             break;
 
-                        case 'hcwServiceUnit':
-                            $data[$value_['response']][$value_['serviceUnit_name']] = (int)$value_['total'];
-                            break;
 
                         case 'hcwServiceUnit_raw':
                             $data[] = $value_;
                             break;
 
+                        case 'mainsource_raw':
+                            $data[] = $value_;
+                            break;
+
+
+
                         case 'reason_raw':
                         case 'response_raw':
                         case 'total_raw':
                         case 'functionality_raw':
-                        case 'mainsource_raw':
                             $data[] = $value_;
                             break;
      

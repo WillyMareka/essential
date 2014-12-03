@@ -1,9 +1,8 @@
--- --------------------------------------------------------------------------------
--- Routine DDL
--- Note: comments before and after the routine body will not be stored by the server
--- --------------------------------------------------------------------------------
-DELIMITER $$
+USE `mnh_rest2`;
+DROP procedure IF EXISTS `get_indicator_comparison`;
 
+DELIMITER $$
+USE `mnh_rest2`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_indicator_comparison`(criteria VARCHAR(45), analytic_value VARCHAR(45), survey_type VARCHAR(45),survey_category VARCHAR(45), indicator_for VARCHAR(45), statistic VARCHAR(45))
 BEGIN
 CASE statistic
@@ -385,7 +384,7 @@ SELECT
     f.fac_district,
     f.fac_county,
     f.fac_tier,
-    li.li_assessorResponse,
+	li.li_assessorResponse,
     li.li_hcwResponse,
     i.indicator_name
 FROM
@@ -856,10 +855,11 @@ ORDER BY f.fac_county,f.fac_district, f.fac_name;
 
 WHEN 'facility' THEN 
 SELECT 
-    f.fac_mfl,
+    
     f.fac_name,
     f.fac_district,
     f.fac_county,
+    f.fac_mfl,
     f.fac_tier,
     li.li_hcwResponse,
     i.indicator_name
@@ -880,4 +880,7 @@ ORDER BY f.fac_county,f.fac_district, f.fac_name;
 END CASE;
 
 END CASE;
-END
+END$$
+
+DELIMITER ;
+

@@ -1,9 +1,8 @@
--- --------------------------------------------------------------------------------
--- Routine DDL
--- Note: comments before and after the routine body will not be stored by the server
--- --------------------------------------------------------------------------------
-DELIMITER $$
+USE `mnh_rest2`;
+DROP procedure IF EXISTS `get_question_statistics`;
 
+DELIMITER $$
+USE `mnh_rest2`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_question_statistics`(criteria VARCHAR(45), analytic_value VARCHAR(45), survey_type VARCHAR(45), survey_category VARCHAR(45), questionfor VARCHAR(45), statistics VARCHAR(45))
 BEGIN
 CASE statistics
@@ -12,10 +11,11 @@ CASE criteria
 WHEN 'national' THEN
 
 SELECT 
-    f.fac_mfl,
+    
     f.fac_name,
     f.fac_district,
     f.fac_county,
+    f.fac_mfl,
     f.fac_tier,
     q.question_name,
     (CASE (q.question_code = 'QUC28'
@@ -279,7 +279,7 @@ CASE criteria
 WHEN 'national'THEN
 
 SELECT 
-    f.fac_mfl,
+	f.fac_mfl,
     f.fac_name,
     f.fac_district,
     f.fac_county,
@@ -317,7 +317,7 @@ ORDER BY f.fac_county,f.fac_district, f.fac_name;
 WHEN 'county' THEN
 
 SELECT 
-    f.fac_mfl,
+	f.fac_mfl,
     f.fac_name,
     f.fac_district,
     f.fac_county,
@@ -355,7 +355,7 @@ ORDER BY f.fac_county,f.fac_district, f.fac_name;
 WHEN 'district' THEN
 
 SELECT 
-    f.fac_mfl,
+	f.fac_mfl,
     f.fac_name,
     f.fac_district,
     f.fac_county,
@@ -393,7 +393,7 @@ ORDER BY f.fac_county,f.fac_district, f.fac_name;
 WHEN 'facility' THEN
 
 SELECT 
-    f.fac_mfl,
+	f.fac_mfl,
     f.fac_name,
     f.fac_district,
     f.fac_county,
@@ -1328,6 +1328,124 @@ AND f.fac_mfl = analytic_value
 group by lq.lq_specified_or_follow_up;
 END CASE;
 
+WHEN 'mainsource_raw' THEN
+CASE criteria
+WHEN 'national' THEN
+SELECT 
+    f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    lq.lq_specified_or_follow_up,
+    q.question_name,
+    (case
+        when lq.lq_specified_or_follow_up like 'blood bank available%' THEN 'blood bank available'
+        when lq.lq_specified_or_follow_up like 'transfusion done%' THEN 'transfusion done'
+        when lq.lq_specified_or_follow_up = 'n/a' THEN 'Not Applicable'
+    end) as reason
+FROM
+    log_questions lq
+        JOIN
+    questions q ON lq.question_code = q.question_code
+        AND q.question_for = questionfor
+        JOIN facilities f ON f.fac_mfl = lq.fac_mfl
+        JOIN survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN survey_categories sc ON ss.sc_id = ss.sc_id AND sc.sc_name = survey_category
+        JOIN survey_types st ON ss.st_id = ss.st_id AND st.st_name = survey_type
+WHERE
+    lq.lq_specified_or_follow_up != ''
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+WHEN 'county' THEN
+SELECT 
+    f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    lq.lq_specified_or_follow_up,
+    q.question_name,
+    (case
+        when lq.lq_specified_or_follow_up like 'blood bank available%' THEN 'blood bank available'
+        when lq.lq_specified_or_follow_up like 'transfusion done%' THEN 'transfusion done'
+        when lq.lq_specified_or_follow_up = 'n/a' THEN 'Not Applicable'
+    end) as reason
+FROM
+    log_questions lq
+        JOIN
+    questions q ON lq.question_code = q.question_code
+        AND q.question_for = questionfor
+        JOIN facilities f ON f.fac_mfl = lq.fac_mfl
+        JOIN survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN survey_categories sc ON ss.sc_id = ss.sc_id AND sc.sc_name = survey_category
+        JOIN survey_types st ON ss.st_id = ss.st_id AND st.st_name = survey_type
+WHERE
+    lq.lq_specified_or_follow_up != ''
+AND f.fac_county = analytic_value
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+WHEN 'district' THEN
+SELECT 
+    f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    lq.lq_specified_or_follow_up,
+    q.question_name,
+    (case
+        when lq.lq_specified_or_follow_up like 'blood bank available%' THEN 'blood bank available'
+        when lq.lq_specified_or_follow_up like 'transfusion done%' THEN 'transfusion done'
+        when lq.lq_specified_or_follow_up = 'n/a' THEN 'Not Applicable'
+    end) as reason
+FROM
+    log_questions lq
+        JOIN
+    questions q ON lq.question_code = q.question_code
+        AND q.question_for = questionfor
+        JOIN facilities f ON f.fac_mfl = lq.fac_mfl
+        JOIN survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN survey_categories sc ON ss.sc_id = ss.sc_id AND sc.sc_name = survey_category
+        JOIN survey_types st ON ss.st_id = ss.st_id AND st.st_name = survey_type
+WHERE
+    lq.lq_specified_or_follow_up != ''
+AND f.fac_district = analytic_value
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+
+WHEN 'facility' THEN
+SELECT 
+   f.fac_mfl,
+    f.fac_name,
+    f.fac_district,
+    f.fac_county,
+    f.fac_tier,
+    lq.lq_specified_or_follow_up,
+    q.question_name,
+    (case
+        when lq.lq_specified_or_follow_up like 'blood bank available%' THEN 'blood bank available'
+        when lq.lq_specified_or_follow_up like 'transfusion done%' THEN 'transfusion done'
+        when lq.lq_specified_or_follow_up = 'n/a' THEN 'Not Applicable'
+    end) as reason
+FROM
+    log_questions lq
+        JOIN
+    questions q ON lq.question_code = q.question_code
+        AND q.question_for = questionfor
+        JOIN facilities f ON f.fac_mfl = lq.fac_mfl
+        JOIN survey_status ss ON ss.fac_id = lq.fac_mfl
+        JOIN survey_categories sc ON ss.sc_id = ss.sc_id AND sc.sc_name = survey_category
+        JOIN survey_types st ON ss.st_id = ss.st_id AND st.st_name = survey_type
+WHERE
+    lq.lq_specified_or_follow_up != ''
+AND f.fac_mfl = analytic_value
+GROUP BY f.fac_mfl
+ORDER BY f.fac_county,f.fac_district, f.fac_name;
+END CASE;
+
 WHEN 'availability' THEN 
 CASE criteria
 WHEN 'national' THEN 
@@ -1717,6 +1835,8 @@ WHERE
         AND f.fac_mfl = analytic_value
 GROUP BY lq.lq_response , q.question_code , f.fac_tier;
 END CASE;
+
+
 WHEN 'hcwServiceUnit' THEN 
 CASE criteria
 WHEN 'national' THEN 
@@ -2079,8 +2199,8 @@ FROM
         AND q.question_for = questionfor
         JOIN
     hcw_list hl ON hl.mfl_code = lq.fac_mfl
-        JOIN 
-    facilities f ON f.fac_mfl = lq.fac_mfl
+		JOIN 
+	facilities f ON f.fac_mfl = lq.fac_mfl
 WHERE
     q.question_code != 'QUC32'
 GROUP BY lq.question_code,lq.lq_response;
@@ -2098,8 +2218,8 @@ FROM
         AND q.question_for = questionfor
         JOIN
     hcw_list hl ON hl.mfl_code = lq.fac_mfl
-        JOIN 
-    facilities f ON f.fac_mfl = lq.fac_mfl
+		JOIN 
+	facilities f ON f.fac_mfl = lq.fac_mfl
     AND f.fac_county = analytic_value
 WHERE
     q.question_code != 'QUC32'
@@ -2118,8 +2238,8 @@ FROM
         AND q.question_for = questionfor
         JOIN
     hcw_list hl ON hl.mfl_code = lq.fac_mfl
-        JOIN 
-    facilities f ON f.fac_mfl = lq.fac_mfl
+		JOIN 
+	facilities f ON f.fac_mfl = lq.fac_mfl
     AND f.fac_district = analytic_value
 WHERE
     q.question_code != 'QUC32'
@@ -2138,8 +2258,8 @@ FROM
         AND q.question_for = questionfor
         JOIN
     hcw_list hl ON hl.mfl_code = lq.fac_mfl
-        JOIN 
-    facilities f ON f.fac_mfl = lq.fac_mfl
+		JOIN 
+	facilities f ON f.fac_mfl = lq.fac_mfl
     AND f.fac_mfl = analytic_value
 WHERE
     q.question_code != 'QUC32'
@@ -2165,8 +2285,8 @@ FROM
         AND q.question_for = questionfor
         JOIN
     hcw_list hl ON hl.mfl_code = lq.fac_mfl
-        JOIN 
-    facilities f ON f.fac_mfl = lq.fac_mfl
+		JOIN 
+	facilities f ON f.fac_mfl = lq.fac_mfl
 WHERE
     q.question_code != 'QUC32'
 GROUP BY f.fac_mfl
@@ -2188,8 +2308,8 @@ FROM
         AND q.question_for = questionfor
         JOIN
     hcw_list hl ON hl.mfl_code = lq.fac_mfl
-        JOIN 
-    facilities f ON f.fac_mfl = lq.fac_mfl
+		JOIN 
+	facilities f ON f.fac_mfl = lq.fac_mfl
     AND f.fac_county = analytic_value
 WHERE
     q.question_code != 'QUC32'
@@ -2212,8 +2332,8 @@ FROM
         AND q.question_for = questionfor
         JOIN
     hcw_list hl ON hl.mfl_code = lq.fac_mfl
-        JOIN 
-    facilities f ON f.fac_mfl = lq.fac_mfl
+		JOIN 
+	facilities f ON f.fac_mfl = lq.fac_mfl
     AND f.fac_district = analytic_value
 WHERE
     q.question_code != 'QUC32'
@@ -2236,8 +2356,8 @@ FROM
         AND q.question_for = questionfor
         JOIN
     hcw_list hl ON hl.mfl_code = lq.fac_mfl
-        JOIN 
-    facilities f ON f.fac_mfl = lq.fac_mfl
+		JOIN 
+	facilities f ON f.fac_mfl = lq.fac_mfl
     AND f.fac_mfl = analytic_value
 WHERE
     q.question_code != 'QUC32'
@@ -2416,4 +2536,7 @@ GROUP BY f.fac_mfl
 ORDER BY f.fac_county,f.fac_district, f.fac_name;
 END CASE;
 END CASE;
-END
+END$$
+
+DELIMITER ;
+

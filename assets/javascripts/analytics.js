@@ -1140,12 +1140,24 @@ function setRawUrl(criteria, county, district, facility, survey,
         raw_url = 'analytics/getIndicatorDangerRaw/' + criteria + '/' + value + '/' +
           survey + '/' + survey_category + '/' + data_for  + '/' + statistic;
         break;
-      case 'correctness':
-        raw_url = 'analytics/getIndicatorCorrectnessRaw/' + criteria + '/' + value + '/' +
-          survey + '/' + survey_category + '/' + data_for  + '/' + statistic;
+      case 'bemresponse':
+        raw_url = 'analytics/getBEMONCRaw/' + criteria + '/' + value + '/' +
+          survey + '/' + survey_category + '/' + statistic;
+        break;
+      case 'bemreason':
+        raw_url = 'analytics/getBEMONCREASONRaw/' + criteria + '/' + value + '/' +
+          survey + '/' + survey_category + '/' + statistic;
+        break;
+      case 'diarrhoea':
+        raw_url = 'analytics/getDiarrhoeaRaw/' + criteria + '/' + value + '/' +
+          survey + '/' + survey_category + '/' + statistic;
         break;
       case 'classification':
         raw_url = 'analytics/getIndicatorClassificationRaw/' + criteria + '/' + value + '/' +
+          survey + '/' + survey_category + '/' + data_for  + '/' + statistic;
+        break;
+      case 'correctness':
+        raw_url = 'analytics/getIndicatorCorrectnessRaw/' + criteria + '/' + value + '/' +
           survey + '/' + survey_category + '/' + data_for  + '/' + statistic;
         break;
       case 'assessment':
@@ -1156,7 +1168,10 @@ function setRawUrl(criteria, county, district, facility, survey,
         raw_url = 'analytics/getIndicatorRaw/' + criteria + '/' + value + '/' +
           survey + '/' + survey_category + '/' + data_for;
         break;
-
+      case 'findings':
+        raw_url = 'analytics/getIndicatorFindingsRaw/' + criteria + '/' + value + '/' +
+          survey + '/' + survey_category + '/' + data_for  + '/' + statistic;
+        break;
       case 'commodity':
         raw_url = 'analytics/getCommodityRaw/' + criteria + '/' + value + '/' +
           survey + '/' + survey_category + '/' + data_for + '/' + statistic;
@@ -1485,13 +1500,13 @@ function statisticsHandler(criteria, value, survey, survey_category,
         case 'section-2':
           //Section 2 MNH
           loadGraph(base_url, 'analytics/getDiarrhoeaStatistics/' + criteria +
-            '/' + value + '/' + survey + '/' + survey_category,
+            '/' + value + '/' + survey + '/' + survey_category + '/response',
             '#MNHdeliveries');
           loadGraph(base_url, 'analytics/getBemoncQuestion/' + criteria + '/' +
-            value + '/' + survey + '/' + survey_category,
+            value + '/' + survey + '/' + survey_category + '/response',
             '#BEMONCQuestions');
           loadGraph(base_url, 'analytics/getBemONCReason/' + criteria + '/' +
-            value + '/' + survey + '/' + survey_category, '#BEMONCReasons');
+            value + '/' + survey + '/' + survey_category + '/reason', '#BEMONCReasons');
           loadGraph(base_url, 'analytics/getCEOC/' + criteria + '/' + value +
             '/' + survey + '/' + survey_category, '#CEmONC');
           loadGraph(base_url, 'analytics/getCSReasons/' + criteria + '/' +
