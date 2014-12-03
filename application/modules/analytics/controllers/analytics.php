@@ -3305,10 +3305,7 @@ class Analytics extends MY_Controller
            $results = $this->analytics_model->getBeds($criteria, $value, $survey, $survey_category, $for,$statistics);
           //echo "<pre>";print_r($results);echo "</pre>";die;
         $results = $this->arrays->reset($results);
-      
-
-        
-        echo $this->export->generate($results, 'Beds Statistics for' . ucwords($for) . '(' . $value . ')', $form);
+      echo $this->export->generate($results, 'Beds Statistics for' . ucwords($for) . '(' . $value . ')', $form);
     }
     
     /**

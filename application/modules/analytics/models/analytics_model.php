@@ -2818,7 +2818,7 @@ ORDER BY f.fac_county ASC;";
          */
         public function runMap($survey, $survey_category, $statistic) {
             $myData = array();
-            $counties = $this->getCounties();
+            $counties = $this->getAllCountyNames();
             foreach ($counties as $county) {
                 $countyName = $county['countyName'];
                 
