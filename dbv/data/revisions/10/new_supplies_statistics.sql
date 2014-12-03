@@ -671,7 +671,7 @@ WHEN 'national' THEN
 SELECT 
     count(a_s.supplier_code) AS total_response,
     s.supplier_code AS supply_code,
-    s.supplier_name AS supply_name
+    s.supplier_name AS supply_name,f.fac_tier
 FROM
     available_supplies a_s
         JOIN
@@ -687,16 +687,13 @@ FROM
         JOIN
     survey_categories sc ON sc.sc_id = ss.sc_id
         AND sc.sc_name = survey_category
-WHERE
-    a_s.supplier_code != ''
-        && a_s.supplier_code != 'N/A'
-GROUP BY a_s.supplier_code , s.supplier_name;
+GROUP BY a_s.supplier_code , s.supplier_name,f.fac_tier;
 
 WHEN 'county' THEN
 SELECT 
     count(a_s.supplier_code) AS total_response,
     s.supplier_code AS supply_code,
-    s.supplier_name AS supply_name
+    s.supplier_name AS supply_name,f.fac_tier
 FROM
     available_supplies a_s
         JOIN
@@ -712,16 +709,14 @@ FROM
         JOIN
     survey_categories sc ON sc.sc_id = ss.sc_id
         AND sc.sc_name = survey_category
-WHERE f.fac_county = analytic_value AND
-    a_s.supplier_code != ''
-        && a_s.supplier_code != 'N/A'
-GROUP BY a_s.supplier_code , s.supplier_name;
+WHERE f.fac_county = analytic_value 
+GROUP BY a_s.supplier_code , s.supplier_name,f.fac_tier;
 
 WHEN 'district' THEN
 SELECT 
     count(a_s.supplier_code) AS total_response,
     s.supplier_code AS supply_code,
-    s.supplier_name AS supply_name
+    s.supplier_name AS supply_name,f.fac_tier
 FROM
     available_supplies a_s
         JOIN
@@ -737,16 +732,14 @@ FROM
         JOIN
     survey_categories sc ON sc.sc_id = ss.sc_id
         AND sc.sc_name = survey_category
-WHERE f.fac_district = analytic_value AND
-    a_s.supplier_code != ''
-        && a_s.supplier_code != 'N/A'
-GROUP BY a_s.supplier_code , s.supplier_name;
+WHERE f.fac_district = analytic_value
+GROUP BY a_s.supplier_code , s.supplier_name,f.fac_tier;
 
 WHEN 'facility' THEN
 SELECT 
     count(a_s.supplier_code) AS total_response,
     s.supplier_code AS supply_code,
-    s.supplier_name AS supply_name
+    s.supplier_name AS supply_name,f.fac_tier
 FROM
     available_supplies a_s
         JOIN
@@ -762,10 +755,113 @@ FROM
         JOIN
     survey_categories sc ON sc.sc_id = ss.sc_id
         AND sc.sc_name = survey_category
-WHERE f.fac_mfl = analytic_value AND
-    a_s.supplier_code != ''
-        && a_s.supplier_code != 'N/A'
-GROUP BY a_s.supplier_code , s.supplier_name;
+WHERE f.fac_mfl = analytic_value 
+GROUP BY a_s.supplier_code , s.supplier_name,f.fac_tier;
+END CASE;
+WHEN 'unavailability' THEN 
+CASE criteria
+WHEN 'national' THEN 
+SELECT
+    count(distinct f.fac_mfl) AS total_response,
+    sq.supply_code as supplies,
+    sq.as_reason_unavailable AS frequency,
+	s.supply_name
+
+FROM
+    available_supplies sq JOIN 
+    supplies s
+ON
+    sq.supply_code = s.supply_code
+        AND supply_for = supplyfor
+        JOIN
+            facilities f ON f.fac_mfl = sq.fac_mfl
+                JOIN
+            survey_status ss ON ss.fac_id = f.fac_mfl
+				JOIN
+			survey_categories sc ON(sc.sc_id = ss.sc_id AND sc.sc_name = survey_category)
+                JOIN
+            survey_types st ON (st.st_id = ss.st_id
+                AND st.st_name = survey_type)
+GROUP BY sq.supply_code , sq.as_availability
+ORDER BY sq.supply_code;
+
+WHEN 'county' THEN 
+SELECT
+    count(distinct f.fac_mfl) AS total_response,
+    sq.supply_code as supplies,
+    sq.as_reason_unavailable AS frequency,
+	s.supply_name
+
+FROM
+    available_supplies sq JOIN 
+    supplies s
+ON
+    sq.supply_code = s.supply_code
+        AND supply_for = supplyfor
+        JOIN
+            facilities f ON f.fac_mfl = sq.fac_mfl
+                JOIN
+            survey_status ss ON ss.fac_id = f.fac_mfl
+				JOIN
+			survey_categories sc ON(sc.sc_id = ss.sc_id AND sc.sc_name = survey_category)
+                JOIN
+            survey_types st ON (st.st_id = ss.st_id
+                AND st.st_name = survey_type)
+                WHERE f.fac_county = analytic_value
+GROUP BY sq.supply_code , sq.as_availability
+ORDER BY sq.supply_code;
+
+WHEN 'district' THEN 
+SELECT
+    count(distinct f.fac_mfl) AS total_response,
+    sq.supply_code as supplies,
+    sq.as_reason_unavailable AS frequency,
+	s.supply_name
+
+FROM
+    available_supplies sq JOIN 
+    supplies s
+ON
+    sq.supply_code = s.supply_code
+        AND supply_for = supplyfor
+        JOIN
+            facilities f ON f.fac_mfl = sq.fac_mfl
+                JOIN
+            survey_status ss ON ss.fac_id = f.fac_mfl
+				JOIN
+			survey_categories sc ON(sc.sc_id = ss.sc_id AND sc.sc_name = survey_category)
+                JOIN
+            survey_types st ON (st.st_id = ss.st_id
+                AND st.st_name = survey_type)
+                WHERE f.fac_district = analytic_value
+GROUP BY sq.supply_code , sq.as_availability
+ORDER BY sq.supply_code;
+
+WHEN 'facility' THEN 
+SELECT
+    count(distinct f.fac_mfl) AS total_response,
+    sq.supply_code as supplies,
+    sq.as_reason_unavailable AS frequency,
+	s.supply_name
+
+FROM
+    available_supplies sq JOIN 
+    supplies s
+ON
+    sq.supply_code = s.supply_code
+        AND supply_for = supplyfor
+        JOIN
+            facilities f ON f.fac_mfl = sq.fac_mfl
+                JOIN
+            survey_status ss ON ss.fac_id = f.fac_mfl
+				JOIN
+			survey_categories sc ON(sc.sc_id = ss.sc_id AND sc.sc_name = survey_category)
+                JOIN
+            survey_types st ON (st.st_id = ss.st_id
+                AND st.st_name = survey_type)
+                WHERE f.fac_mfl = analytic_value
+GROUP BY sq.supply_code , sq.as_availability
+ORDER BY sq.supply_code;
 END CASE;
 END CASE;
 END$$

@@ -3109,7 +3109,7 @@ class Analytics extends MY_Controller
             foreach ($results as $key => $value) {
                 $resultArray[]=array('name'=>$key,'data'=>$value);
             }
-            var_dump($resultArray);
+            //var_dump($resultArray);
             $colors = array('#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970', '#f28f43', '#77a1e5', '#c42525', '#dddddd');
             $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 90, 'bar', '', $for, 'question', $statistics, $colors);
         }else if($statistics == 'total' && $for == 'nur'){
@@ -3276,12 +3276,6 @@ class Analytics extends MY_Controller
 
         echo $this->export->generate($results, 'Indicator Correctness for' . ucwords($for) . '(' . $value . ')', $form);
     }
-
-
-
-
-    
-    
 
     /**
      * [getBedStatistics description]
@@ -3475,7 +3469,7 @@ class Analytics extends MY_Controller
         $resultArray[] = array('name' => 'Numbers', 'data' => $gData);
 
         
-        $this->populateGraph($resultArray, '', $category, $criteria, '', 70, 'bar', '','','','diarrhoea', '');
+        $this->populateGraph($resultArray, '', $category, $criteria, '', 70, 'bar', '','','diarrhoea', '','');
     }
      public function getDiarrhoeaRaw($criteria, $value, $survey, $survey_category,$statistic, $form) {
            $results = $this->analytics_model->getDiarrhoeaStatistics($criteria, $value, $survey, $survey_category,'response_raw');
@@ -5377,22 +5371,14 @@ class Analytics extends MY_Controller
     }
     
 
-    public function getBemONCQuestionRAW($criteria, $value, $survey, $survey_category,$form){
+    public function getBemONCQuestionRAW($criteria, $value, $survey, $survey_category,$statistic,$form){
  $results = $this->analytics_model->getBemONCQuestion($criteria, $value, $survey, $survey_category,'response_raw');
           // echo "<pre>";print_r($results);echo "</pre>";die;
         $results = $this->arrays->reset($results);
-       echo $this->export->generate($results, 'BEMONC Statistics for' . ucwords($for) . '(' . $value . ')', $form);
+       echo $this->export->generate($results, 'BEMONC Question Statistics for' . ucwords($for) . '(' . $value . ')', $form);
     }
 
-    public function getBemONCReasonRAW($criteria, $value, $survey, $survey_category,$form){
- $results = $this->analytics_model->getBemONCReason($criteria, $value, $survey, $survey_category,'response_raw');
-          // echo "<pre>";print_r($results);echo "</pre>";die;
-        $results = $this->arrays->reset($results);
-      
-
-        
-        echo $this->export->generate($results, 'BEMONC Statistics for' . ucwords($for) . '(' . $value . ')', $form);
-    }
+    
     public function getBemONCReason($criteria, $value, $survey, $survey_category) {
         $results = $this->analytics_model->getBemONCReason($criteria, $value, $survey, $survey_category,'response');
 
@@ -5432,9 +5418,16 @@ class Analytics extends MY_Controller
         
         //echo "<pre>"; print_r($resultArray);echo "</pre>";die;
         //$this->populateGraph($resultArray, '', $category, $criteria, 'percent', 120, 'bar');
-        $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 90, 'bar', '', 'bemreason', $statistics);
+        $this->populateGraph($resultArray, '', $category, $criteria, 'percent', 90, 'bar', '','', 'bemonc_reason', '','');
     }
     
+    public function getBemONCReasonRAW($criteria, $value, $survey, $survey_category,$statistic,$form){
+ $results = $this->analytics_model->getBemONCReason($criteria, $value, $survey, $survey_category,'response_raw');
+          // echo "<pre>";print_r($results);echo "</pre>";die;
+        $results = $this->arrays->reset($results);
+      echo $this->export->generate($results, 'BEMONC Reason Statistics for' . ucwords($for) . '(' . $value . ')', $form);
+    }
+
     public function getSignalFunction($criteria, $value, $survey, $survey_category, $function) {
         $results['conducted'] = array();
         $results = $this->analytics_model->getSignalFunction($criteria, $value, $survey, $survey_category, $function);
