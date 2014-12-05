@@ -2049,7 +2049,7 @@ GROUP BY tl.treatmentID ORDER BY tl.treatmentID ASC";
                         } else if (array_key_exists('frequency', $value)) {
                             switch ($for) {
                                 case 'mh':
-                                    $data[$value['fac_tier']][$value['frequency']] = (int)$value['total_response'];
+                                    $data[$value['fac_tier']][$value['supply_name']] = (int)$value['total_response'];
                                     break;
 
                                 default:
@@ -4153,7 +4153,7 @@ ORDER BY question_code";
                             break;
                         
                         case 'response_raw':
-                           $data[]=(int)$value;
+                           $data[]=$value;
                             break;
                     }
                     
@@ -4200,7 +4200,7 @@ ORDER BY question_code";
                 // Dump the extra resultset.
                 $queryData->free_result();
 
-               // echo '<pre>';print_r($this->dataSet);echo '</pre>';die;
+                //echo '<pre>';print_r($this->dataSet);echo '</pre>';die;
 
                 foreach ($this->dataSet as $value_) {
                     if (array_key_exists('question_code', $value_)) {
