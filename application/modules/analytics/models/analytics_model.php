@@ -1276,7 +1276,7 @@ WHERE
                                 $data[$value['indicator_name']][$value['verdict']] = (int)$value['total'];
                                 break;
 
-                                case 'hcwclassification':
+                            case 'hcwclassification':
                                 $data[$value['il_full_name']][$value['li_assessorResponse']] = (int)$value['total'];
                                 break;
 
@@ -1331,7 +1331,28 @@ WHERE
             
             return $this->dataSet;
         }
-        
+
+        public function getIndicatorTypes3() {
+            $query = "SELECT indicator_name 
+                       FROM indicators i , indicator_lookup il
+                         WHERE i.indicator_for = il.il_for 
+                          AND il.il_for = 'con' ";
+            try {
+                $this->dataSet = $this->db->query($query);
+                $this->dataSet = $this->dataSet->result_array();
+                foreach ($this->dataSet as $value) {
+                    
+                        //echo "<pre>";print_r($con);echo "</pre>";
+                       
+                        $data[]=$value;
+                     
+                 }
+            }
+            catch(exception $ex) {
+            }
+            
+            return $data;
+        }
         /*
          * Diarrhoea case numbers per Month
         */
@@ -4315,7 +4336,7 @@ ORDER BY question_code";
                             break;
 
                         case 'hcwRetention':
-                            $data[$value_['fac_tier']][$value_['response']] = (int)$value_['total'];
+                            $data[$value_['question']][$value_['response']] = (int)$value_['total'];
                             break;
 
                          case 'hcwRetention_raw':
