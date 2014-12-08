@@ -2193,7 +2193,7 @@ class Analytics extends MY_Controller
                 }
                 
                 foreach ($fData as $key => $value) {
-                    
+                   // echo '<pre>';print_r($key);echo '</pre>'; exit;
                     if (($key == 'Once')) {
                         $resultArray[] = array('name' => $key, 'data' => $value);
                     } else {
@@ -2676,27 +2676,30 @@ class Analytics extends MY_Controller
         }
     }
     
-    public function getDeliveryReason($criteria, $value, $survey, $survey_category) {
-        $results = $this->analytics_model->getDeliveryReason($criteria, $value, $survey, $survey_category);
+    public function getDeliveryReason($criteria, $value, $survey, $survey_category,$statistic) {
+        
         $number = $resultArray = $q = $skillvalue = $staffvalue = $infrastructurevalue = $equipmentvalue = $commoditiesvalue = $other = array();
         $number = $resultArray = $q = array();
         $count = 0;
         
         //echo "<pre>";print_r($results);echo "</pre>";die;
-        
-        foreach ($results as $key => $value) {
+        if($statistic == 'reason'){
+          $results = $this->analytics_model->getDeliveryReason($criteria, $value, $survey, $survey_category,'reason');
+         foreach ($results as $key => $value) {
             
             foreach ($value as $location => $val) {
                 
-                //echo "<pre>";print_r($location);echo "</pre>";die;
                 
-                if ($location != 0 || $location == 'Inadequate skill' || $location == 'Inadequate staff' || $location == 'Inadequate infrastructure' || $location == 'Inadequate Equipment' || $location == 'Inadequate commodities and supplies') {
-                    if ($location == "0") {
+                if ($location != 0 || $location == '' || $location == 'Inadequate skill' || $location == 'Inadequate staff' || $location == 'Inadequate infrastructure' || $location == 'Inadequate Equipment' || $location == 'Inadequate commodities and supplies') {
+                    if (($location == "0") || ($location == '')) {
                         $location = "No Data";
+                       
                     }
-                    $getData[] = array(ucwords($location), (int)$val);
+                     $getData[] = array(ucwords($location), (int)$val); 
+                    }
+                    
                 }
-            }
+            
         }
         
         $category[] = "Delivery Reasons";
@@ -2707,9 +2710,52 @@ class Analytics extends MY_Controller
         $category = $q;
         
         //echo "<pre>";print_r($resultArray);echo "</pre>";die;
-        $this->populateGraph($resultArray, '', $category, $criteria, '', 70, 'pie');
+        $this->populateGraph($resultArray, '', $category, $criteria, '', 70, 'pie','','','delivery_reason','','');
+    }else{
+      $results = $this->analytics_model->getDeliveryReason($criteria, $value, $survey, $survey_category,'response');
+
+      foreach ($results as $key => $result) {
+              $category[] = $key;
+                
+                foreach ($result as $name => $value) {
+                  
+                    if ($name == 'Yes') {
+                        $color = '#8bbc21';
+                    }elseif ($name == 'No') {
+                        $color = '#fb4347';
+                    }elseif ($name == 'No data') {
+                        $color = '#dddddd';
+                    } else {
+                        $color = $colors[$colorCounter];
+                        $colorCounter++;
+                    }
+                    $gData[] = array('name' => $name, 'y' => (int)$value, 'color' => $color);
+
+                }
+            }
+            $resultArray[] = array('name' => 'Response', 'data' => $gData);
+            //echo "<pre>";print_r($resultArray);echo "</pre>";die;
+             $this->populateGraph($resultArray, '', $category, $criteria, '', 70, 'pie','','','delivery_response','','');
     }
-    
+    }
+
+    //get delivery reasons raw data
+    public function getDeliveryReasonRaw($criteria,$value,$survey,$survey_category,$statistic,$form){
+      $results = $this->analytics_model->getDeliveryReason($criteria, $value, $survey, $survey_category,'reason_raw');
+          //echo "<pre>";print_r($results);echo "</pre>";die;
+        $results = $this->arrays->reset($results);
+      echo $this->export->generate($results, 'Delivery Reason Statistics for' . ucwords($for) . '(' . $value . ')', $form);
+
+    }
+
+    //get delivery response raw data
+    public function getDeliveryResponseRaw($criteria,$value,$survey,$survey_category,$statistic,$form){
+      $results = $this->analytics_model->getDeliveryReason($criteria, $value, $survey, $survey_category,'response_raw');
+          //echo "<pre>";print_r($results);echo "</pre>";die;
+        $results = $this->arrays->reset($results);
+      echo $this->export->generate($results, 'Delivery Response Statistics for' . ucwords($for) . '(' . $value . ')', $form);
+
+    }
     //public function getCHSuppliesLocation($criteria,$value,$survey,$survey_category,$for){
     //$this->getSuppliesLocation($criteria, $value, $survey, $survey_category, 'ch');
     //}
@@ -3332,9 +3378,11 @@ class Analytics extends MY_Controller
         $this->getQuestionStatisticsSingle($criteria, $value, $survey, $survey_category, 'serv', 'response');
     }
     public function getDeliveryServices($criteria, $value, $survey, $survey_category) {
-        $this->getQuestionStatisticsSingle($criteria, $value, $survey, $survey_category, 'prep', 'response');
+        $this->getDeliveryReason($criteria, $value, $survey, $survey_category,'response');
     }
-    
+    public function getDeliveryServicesReason($criteria, $value, $survey, $survey_category) {
+        $this->getDeliveryReason($criteria, $value, $survey, $survey_category,'reason');
+    }
     // public function getWorkProfile($criteria, $value, $survey, $survey_category) {
     //     $this->getQuestionStatistics($criteria, $value, $survey, $survey_category, 'wp', 'response');
     // }
@@ -5292,6 +5340,7 @@ class Analytics extends MY_Controller
      * Beds in facility
      */
     public function getBeds($criteria, $value, $survey, $survey_category, $for) {
+      $value = urldecode($value);
         $results = $this->analytics_model->getBeds($criteria, $value, $survey, $survey_category, $for);
         
         //echo "</pre>";print_r($results);echo "</pre>";die;

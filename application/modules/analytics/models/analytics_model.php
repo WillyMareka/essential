@@ -3674,7 +3674,7 @@ ORDER BY question_code";
          * Beds in facility
          */
         public function getBeds($criteria, $value, $survey, $survey_category, $for,$statistic) {
-            
+            $value = urldecode($value);
             $query = "CALL get_beds_statistics('" . $criteria . "','" . $value . "','" . $survey . "','" . $survey_category . "','" . $for . "','".$statistic."');";
             
             try {
@@ -4582,7 +4582,7 @@ ORDER BY question_code";
             return $data;
         }
         
-        public function getDeliveryReason($criteria, $value, $survey, $survey_category) {
+        public function getDeliveryReason($criteria, $value, $survey, $survey_category, $statistic) {
             $value = urldecode($value);
             
             /*using CI Database Active Record*/
@@ -4590,7 +4590,7 @@ ORDER BY question_code";
             
             //data to hold the final data to relayed to the view,data_set to hold sets of data, analytic_var to hold the analytic variables to be used in the data_series,data_series to hold the title and the json encoded sets of the data_set
             
-            $query = "CALL get_delivery_reasons('" . $criteria . "','" . $value . "','" . $survey . "','" . $survey_category . "');";
+            $query = "CALL get_delivery_reasons('" . $criteria . "','" . $value . "','" . $survey . "','" . $survey_category . "','" . $statistic . "');";
             try {
                 $queryData = $this->db->query($query, array($value));
                 $this->dataSet = $queryData->result_array();
@@ -4601,16 +4601,32 @@ ORDER BY question_code";
                 $pharmacyvalue = 0;
                 if ($this->dataSet !== NULL) {
                     
-                    //echo "<pre>";print_r($this->dataSet);echo "</pre>";die;
+                   //echo "<pre>";print_r($this->dataSet);echo "</pre>";die;
                     foreach ($this->dataSet as $key => $value) {
-                        
-                        //if($value['response'] !='Other Reason'){
-                        if (array_key_exists('question_code', $value)) {
+                        switch ($statistic) {
+                            case 'reason':
+                                if (array_key_exists('question_code', $value)) {
                             $reason = explode(',', $value['lq_reason']);
                             foreach ($reason as $value_) {
                                 $data['question_code'][$value_]+= (int)$value['total_response'];
                             }
                         }
+                                break;
+                            
+                            case 'response':
+                                $data['question_code'][$value['response']]=(int)$value['total_response'];
+                                break;
+
+                            case 'reason_raw':
+                            $data[]=$value;
+                            break;
+
+                            case 'response_raw':
+                            $data[]=$value;
+                            break;
+                        }
+                        //if($value['response'] !='Other Reason'){
+                        
                         
                         //else{
                         //   $data['question_code'][$value_] += (int)$value['total_response'];
