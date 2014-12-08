@@ -1904,7 +1904,7 @@ function statisticsHandler(criteria, value, survey, survey_category,
           //   break;
 
 
-        case 'section-3':
+        case 'section-5':
               loadGraph(base_url, 'analytics/getTreatmentCounseling/' +
             criteria + '/' + value + '/' + survey + '/' + survey_category,
             '#treatcounseling');
