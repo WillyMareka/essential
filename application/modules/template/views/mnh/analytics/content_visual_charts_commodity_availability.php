@@ -1689,7 +1689,7 @@
               </div>
               <div class="medium-graph">
                   <div class="portlet-title">
-                      <h6><i class="fa fa-bar-chart-o"></i><span class="graph-title">Retention After Training</span><span class="sizer">Click to Enlarge</span></h6>
+                      <h6><i class="fa fa-bar-chart-o"></i><span class="graph-title">Retention At Original Facility After Training</span><span class="sizer">Click to Enlarge</span></h6>
                   </div>
                   <div class="portlet-body">
         <div class="chart" id="retentiontraining">
@@ -1699,7 +1699,7 @@
 
               <div class="medium-graph">
                   <div class="portlet-title">
-                      <h6><i class="fa fa-bar-chart-o"></i><span class="graph-title">County Transfers after Training</span><span class="sizer">Click to Enlarge</span></h6>
+                      <h6><i class="fa fa-bar-chart-o"></i><span class="graph-title">Transfers After Training</span><span class="sizer">Click to Enlarge</span></h6>
                   </div>
                   <div class="portlet-body">
           <div class="chart" id="transfertraining">
@@ -1724,7 +1724,7 @@
             <div class="medium-graph" >
                 <div class="portlet-title">
 
-                    <h6><i class="fa fa-bar-chart-o"></i><span class="graph-title">Services Provision to child</span><span class="sizer">Click to Enlarge</span></h6>
+                    <h6><i class="fa fa-bar-chart-o"></i><span class="graph-title">Services Offered To a Child</span><span class="sizer">Click to Enlarge</span></h6>
                 </div>
                 <div class="portlet-body">
 
@@ -1736,7 +1736,7 @@
             <div class="medium-graph">
                 <div class="portlet-title">
 
-                    <h6><i class="fa fa-bar-chart-o"></i><span class="graph-title">Danger Signs Assessment</span><span class="sizer">Click to Enlarge</span></h6>
+                    <h6><i class="fa fa-bar-chart-o"></i><span class="graph-title">Danger Signs Assessed</span><span class="sizer">Click to Enlarge</span></h6>
                 </div>
                 <div class="portlet-body">
 
@@ -1746,7 +1746,7 @@
                     </div>
                 </div>
             </div>
-            <div class="medium-graph">
+            <!-- <div class="medium-graph">
                 <div class="portlet-title">
 
                     <h6><i class="fa fa-bar-chart-o"></i><span class="graph-title">Danger Signs Presence</span><span class="sizer">Click to Enlarge</span></h6>
@@ -1758,7 +1758,7 @@
 
                     </div>
                 </div>
-            </div>
+            </div> -->
 
 
         </div>
@@ -1779,7 +1779,7 @@
             <div class="semi-large-graph">
                     <div class="portlet-title">
 
-                        <h6><i class="fa fa-bar-chart-o"></i>Was the symptom assessed ?<span><select id="assessment_types1"></select></span><span class="sizer">Click to Enlarge</span></h6></h6>
+                        <h6><i class="fa fa-bar-chart-o"></i>Main Symptoms: Cases Presented<span><select id="assessment_types1"></select></span><span class="sizer">Click to Enlarge</span></h6></h6>
                     </div>
                     <div class="portlet-body">
                         <p>Please Select main symptom/condition above to load the graph</p>
@@ -1793,7 +1793,7 @@
            <div class="semi-large-graph">
                     <div class="portlet-title">
                         
-                        <h6><i class="fa fa-bar-chart-o"></i><span class="graph-title">Was the symptom assessed correctly ?</span><span><select id="indicator_types1"></select></span><span class="sizer">Click to Enlarge</span></h6>
+                        <h6><i class="fa fa-bar-chart-o"></i><span class="graph-title">Main Symptoms Assessment</span><span><select id="indicator_types1"></select></span><span class="sizer">Click to Enlarge</span></h6>
 
                     </div>
                     <div class="portlet-body">
@@ -1806,7 +1806,7 @@
 
             <div class="semi-large-graph">
                     <div class="portlet-title">
-                        <h6><i class="fa fa-bar-chart-o"></i>Symptom Findings<span><select id="finding_types"></select></span><span class="sizer">Click to Enlarge</span></h6>
+                        <h6><i class="fa fa-bar-chart-o"></i>Main Symptom Findings (Comparison Between HCW Findings Against Assessor Finding)<span><select id="finding_types"></select></span><span class="sizer">Click to Enlarge</span></h6>
 
                     </div>
                     <div class="portlet-body">
@@ -1835,7 +1835,7 @@
 
                 <div class="semi-large-graph">
                     <div class="portlet-title">
-                        <h6><i class="fa fa-bar-chart-o"></i>Was the symptom assessed ?<span><select id="assessment_types2"></select></span><span class="sizer">Click to Enlarge</span></h6>
+                        <h6><i class="fa fa-bar-chart-o"></i>Main Symptoms: Cases Presented<span><select id="assessment_types2"></select></span><span class="sizer">Click to Enlarge</span></h6>
 
                     </div>
                     <div class="portlet-body">
@@ -1848,7 +1848,7 @@
             
                 <div class="semi-large-graph">
                     <div class="portlet-title">
-                        <h6><i class="fa fa-bar-chart-o"></i>Was the symptom assessed correctly ?<span><select id="indicator_types2"></select></span><span class="sizer">Click to Enlarge</span></h6>
+                        <h6><i class="fa fa-bar-chart-o"></i>Main Symptoms Assessment<span><select id="indicator_types2"></select></span><span class="sizer">Click to Enlarge</span></h6>
                     </div>
                     <div class="portlet-body">
                         <p>Please Select main symptom/condition above to load the graph</p>
@@ -1860,7 +1860,7 @@
 
                 <div class="semi-large-graph">
                     <div class="portlet-title">
-                        <h6><i class="fa fa-bar-chart-o"></i>Symptom Findings<span><select id="finding_types1"></select></span><span class="sizer">Click to Enlarge</span></h6>
+                        <h6><i class="fa fa-bar-chart-o"></i>Main Symptom Findings (Comparison Between HCW Findings Against Assessor Finding)<span><select id="finding_types1"></select></span><span class="sizer">Click to Enlarge</span></h6>
 
                     </div>
                     <div class="portlet-body">
@@ -1888,7 +1888,7 @@
 
             <div class="semi-large-graph">
                     <div class="portlet-title">
-                        <h6><i class="fa fa-bar-chart-o"></i>Was the symptom assessed ?<span><select id="assessment_types3"></select></span><span class="sizer">Click to Enlarge</span></h6>
+                        <h6><i class="fa fa-bar-chart-o"></i>Assessment of Conditions<span><select id="assessment_types3"></select></span><span class="sizer">Click to Enlarge</span></h6>
 
                     </div>
                     <div class="portlet-body">
@@ -1900,7 +1900,7 @@
                 </div>
 
                 
-            <div class="semi-large-graph">
+            <!-- <div class="semi-large-graph">
                     <div class="portlet-title">
                         <h6><i class="fa fa-bar-chart-o"></i>Was the symptom assessed correctly ?<span><select id="indicator_types3"></select></span><span class="sizer">Click to Enlarge</span></h6>
                     </div>
@@ -1910,11 +1910,11 @@
                         </div>
 
                     </div>
-                </div>
+                </div> -->
 
                 <div class="semi-large-graph">
                     <div class="portlet-title">
-                        <h6><i class="fa fa-bar-chart-o"></i>Symptom Findings<span><select id="finding_types2"></select></span><span class="sizer">Click to Enlarge</span></h6>
+                        <h6><i class="fa fa-bar-chart-o"></i>Assessment Findings (Comparison Between HCW Findings Against Assessor Findings)<span><select id="finding_types2"></select></span><span class="sizer">Click to Enlarge</span></h6>
 
                     </div>
                     <div class="portlet-body">
@@ -1924,6 +1924,19 @@
 
                     </div>
                 </div>
+
+            <div class="semi-large-graph" >
+                <div class="portlet-title">
+
+                    <h6><i class="fa fa-bar-chart-o"></i><span class="graph-title">Treatment & Counseling </span><span class="sizer">Click to Enlarge</span></h6>
+                </div>
+                <div class="portlet-body">
+
+                    <div class="chart" id="treatcounseling">
+
+                    </div>
+                </div>
+            </div>
 
                 
 
@@ -1943,7 +1956,7 @@
             <div class="semi-large-graph" >
                 <div class="portlet-title">
 
-                    <h6><i class="fa fa-bar-chart-o"></i><span class="graph-title">Consultation observation</span><span class="sizer">Click to Enlarge</span></h6>
+                    <h6><i class="fa fa-bar-chart-o"></i><span class="graph-title">Consultation Observation</span><span class="sizer">Click to Enlarge</span></h6>
                 </div>
                 <div class="portlet-body">
 
@@ -1955,7 +1968,7 @@
             <div class="semi-large-graph">
                 <div class="portlet-title">
 
-                    <h6><i class="fa fa-bar-chart-o"></i><span class="graph-title">Exit Interview With The Caregiver</span><span class="sizer">Click to Enlarge</span></h6>
+                    <h6><i class="fa fa-bar-chart-o"></i><span class="graph-title">Exit Interview With the Caregiver</span><span class="sizer">Click to Enlarge</span></h6>
                 </div>
                 <div class="portlet-body">
 
@@ -1970,7 +1983,7 @@
         </div>
     </div>
 </div>
-<div class="panel panel-default analytics_row section" data-survey='hcw' id="hcw-section-7">
+<!-- <div class="panel panel-default analytics_row section" data-survey='hcw' id="hcw-section-7">
     <div class="panel-heading">
         <h4 class="panel-title">
             <a data-toggle="collapse" data-parent="#accordion" href="#collapseThirtySix">
@@ -2021,7 +2034,7 @@
 
         </div>
     </div>
-</div>
+</div> -->
 
 
 </div>
