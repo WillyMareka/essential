@@ -798,24 +798,66 @@ class MY_Model extends CI_Model
     public function getCountyData($county)
     {
       $data = array();
-      $query = $this->db->query("SELECT count(h.id) as hcws FROM hcw_list h
-        JOIN facilities f ON h.mfl_code = f.fac_mfl
+      if($county != 'national')
+      {
+        $query = $this->db->query("SELECT count(h.id) as hcws FROM hcw_list h
+        LEFT JOIN facilities f ON h.mfl_code = f.fac_mfl
         WHERE f.fac_county = '".$county."' AND h.activity_id = 10
         ");
 
+         $sections_query = $this->db->query("SELECT COUNT(DISTINCT(t.ast_section)) as sections, t.hcw_id FROM hcw_assessment_tracker t 
+        JOIN hcw_list h ON t.hcw_id = h.id
+        JOIN facilities f ON f.fac_mfl = h.mfl_code
+        WHERE f.fac_county = '".$county."'
+        GROUP BY t.hcw_id");
+      }
+      else
+      {
+        $query = $this->db->query("SELECT count(h.id) as hcws FROM hcw_list h
+           LEFT JOIN facilities f ON h.mfl_code = f.fac_mfl
+          WHERE h.activity_id = 10
+        ");
+
+         $sections_query = $this->db->query("SELECT COUNT(DISTINCT(t.ast_section)) as sections, t.hcw_id FROM hcw_assessment_tracker t 
+        JOIN hcw_list h ON t.hcw_id = h.id
+        JOIN facilities f ON f.fac_mfl = h.mfl_code
+        GROUP BY t.hcw_id");
+      }
+
       $result = $query->result_array();
       $data['hcws'] = $result[0]['hcws'];
-      //$data['assessed'] = $result->counts;
+      
+     
+      $section_result = $sections_query->result_array();
+
+      $assessed_counter = 0;
+      foreach ($section_result as $key => $value) {
+        if($value['sections'] == 5)
+        {
+          $assessed_counter++;
+        }
+      }
+      $data['assessed'] = $assessed_counter;
       $options = array('QHC28'=>'Certified', 'QHC29' => 'Mentorship', 'QHC30' => 'TOT');
 
       foreach ($options as $key => $value) {
-        $query = $this->db->query("SELECT count('q.lq_id') as counter FROM log_questions_hcw q 
-          JOIN facilities f ON f.fac_mfl = q.fac_mfl
-          WHERE q.question_code = '" . $key ."' AND f.fac_county = '".$county."' AND q.lq_response = 'Yes'");
+         if($county != 'national')
+          {
+            $query = $this->db->query("SELECT count('q.lq_id') as counter FROM log_questions_hcw q 
+              JOIN facilities f ON f.fac_mfl = q.fac_mfl
+              WHERE q.question_code = '" . $key ."' AND f.fac_county = '".$county."' AND q.lq_response = 'Yes'");
+          }
+          else
+          {
+             $query = $this->db->query("SELECT count('q.lq_id') as counter FROM log_questions_hcw q 
+              JOIN facilities f ON f.fac_mfl = q.fac_mfl
+              WHERE q.question_code = '" . $key ."' AND q.lq_response = 'Yes'");
+          }
         $result = $query->result_array();
 
         $data[$value] = $result[0]['counter'];
       }
+      echo "<pre>";print_r($data);die;
       return $data;
     }
 

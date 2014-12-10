@@ -579,6 +579,14 @@ class Survey extends MY_Controller
         echo json_encode($results);
     }
 
+ public function getCountData($survey_type, $survey_category, $county) {
+        $county = $this->session->userdata('county');
+        if (!$county) {
+            $county = 'national';
+        }
+        $results = $this->data_model->getCountyData($county);
+        echo json_encode($results);
+    }
     /**
      * [getDistrictData description]
      * @param  [type] $survey_type     [description]
