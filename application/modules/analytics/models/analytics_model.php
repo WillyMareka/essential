@@ -1923,6 +1923,7 @@ GROUP BY tl.treatmentID ORDER BY tl.treatmentID ASC";
                                 case 'availability_raw':
                                 case 'unavailability_raw':
                                 case 'location_raw':
+                                //case 'supplier_raw' :
                                     foreach ($value as $k => $v) {
                                         $data_array[$k] = $v;
                                     }
@@ -1933,7 +1934,7 @@ GROUP BY tl.treatmentID ORDER BY tl.treatmentID ASC";
                                     break;
 
                                 case 'supplier_raw':
-                                    
+                                    $data[]=$value;
                                     break;
                             }
                         } else {
@@ -2042,14 +2043,14 @@ GROUP BY tl.treatmentID ORDER BY tl.treatmentID ASC";
                 //echo($this->db->last_query());die;
                 if ($this->dataSet !== NULL) {
                     
-                    //echo "<pre>";print_r($this->dataSet);echo "</pre>";die;
+                   //echo "<pre>";print_r($this->dataSet);echo "</pre>";die;
                     foreach ($this->dataSet as $value) {
                         if ($statistic == 'availability_raw' || $statistic == 'quantity_raw' || $statistic == 'unavailability_raw' || $statistic == 'supplier_raw'|| $statistic == 'location_raw') {
                             $data[] = $value;
                         } else if (array_key_exists('frequency', $value)) {
                             switch ($for) {
                                 case 'mh':
-                                    $data[$value['fac_tier']][$value['supply_name']] = (int)$value['total_response'];
+                                    $data[$value['fac_tier']][$value['frequency']] = (int)$value['total'];
                                     break;
 
                                 default:
@@ -2059,7 +2060,7 @@ GROUP BY tl.treatmentID ORDER BY tl.treatmentID ASC";
                         } else if (array_key_exists('location', $value)) {
                             $location = explode(',', $value['location']);
                             foreach ($location as $place) {
-                                $data[$value['supply_name']][$place]+= (int)$value['total_response'];
+                                $data[$value['fac_tier']][$place]+= (int)$value['total_response'];
                             }
                             
                             //$data[$value['supply_name']][$value['location']]=(int)$value['total_response'];
@@ -2070,7 +2071,12 @@ GROUP BY tl.treatmentID ORDER BY tl.treatmentID ASC";
                             $data[$value['supply_name']]['non_functional']+= (int)$value['total_non_functional'];
                         } else if (array_key_exists('fac_tier', $value)) {
                             $data[$value['fac_tier']][$value['supply_name']] = (int)$value['total_response'];
-                        }
+                        }else if (array_key_exists('locations', $value)) {
+                            $location = explode(',', $value['locations']);
+                            foreach ($location as $place) {
+                                $data[$value['supply_name']][$place]+= (int)$value['total_response'];
+                            }
+                            }
                     }
                     
                     //echo "<pre>";print_r($data);echo "</pre>";die;
@@ -2304,7 +2310,7 @@ LIMIT 0 , 1000
                         if ($statistic == 'availability_raw' || $statistic == 'quantity_raw' || $statistic == 'unavailability_raw' || $statistic == 'supplier_raw' || $statistic == 'location_raw') {
                             $data[] = $value;
                         } else if (array_key_exists('frequency', $value)) {
-                            $data[$value['resource_name']][$value['frequency']] = (int)$value['total_response'];
+                            $data[$value['fac_tier']][$value['frequency']] = (int)$value['total_response'];
                         } else if (array_key_exists('location', $value)) {
                             $location = explode(',', $value['location']);
                             foreach ($location as $place) {
@@ -2319,7 +2325,7 @@ LIMIT 0 , 1000
                         }
                     }
                     
-                    // echo "<pre>";print_r($data);echo "</pre>";die;
+                   // echo "<pre>";print_r($data);echo "</pre>";die;
                     
                     
                     
@@ -3695,7 +3701,7 @@ ORDER BY question_code";
          * Beds in facility
          */
         public function getBeds($criteria, $value, $survey, $survey_category, $for,$statistic) {
-            
+            $value = urldecode($value);
             $query = "CALL get_beds_statistics('" . $criteria . "','" . $value . "','" . $survey . "','" . $survey_category . "','" . $for . "','".$statistic."');";
             
             try {
@@ -4603,7 +4609,7 @@ ORDER BY question_code";
             return $data;
         }
         
-        public function getDeliveryReason($criteria, $value, $survey, $survey_category) {
+        public function getDeliveryReason($criteria, $value, $survey, $survey_category, $statistic) {
             $value = urldecode($value);
             
             /*using CI Database Active Record*/
@@ -4611,7 +4617,7 @@ ORDER BY question_code";
             
             //data to hold the final data to relayed to the view,data_set to hold sets of data, analytic_var to hold the analytic variables to be used in the data_series,data_series to hold the title and the json encoded sets of the data_set
             
-            $query = "CALL get_delivery_reasons('" . $criteria . "','" . $value . "','" . $survey . "','" . $survey_category . "');";
+            $query = "CALL get_delivery_reasons('" . $criteria . "','" . $value . "','" . $survey . "','" . $survey_category . "','" . $statistic . "');";
             try {
                 $queryData = $this->db->query($query, array($value));
                 $this->dataSet = $queryData->result_array();
@@ -4622,16 +4628,32 @@ ORDER BY question_code";
                 $pharmacyvalue = 0;
                 if ($this->dataSet !== NULL) {
                     
-                    //echo "<pre>";print_r($this->dataSet);echo "</pre>";die;
+                   //echo "<pre>";print_r($this->dataSet);echo "</pre>";die;
                     foreach ($this->dataSet as $key => $value) {
-                        
-                        //if($value['response'] !='Other Reason'){
-                        if (array_key_exists('question_code', $value)) {
+                        switch ($statistic) {
+                            case 'reason':
+                                if (array_key_exists('question_code', $value)) {
                             $reason = explode(',', $value['lq_reason']);
                             foreach ($reason as $value_) {
                                 $data['question_code'][$value_]+= (int)$value['total_response'];
                             }
                         }
+                                break;
+                            
+                            case 'response':
+                                $data['question_code'][$value['response']]=(int)$value['total_response'];
+                                break;
+
+                            case 'reason_raw':
+                            $data[]=$value;
+                            break;
+
+                            case 'response_raw':
+                            $data[]=$value;
+                            break;
+                        }
+                        //if($value['response'] !='Other Reason'){
+                        
                         
                         //else{
                         //   $data['question_code'][$value_] += (int)$value['total_response'];

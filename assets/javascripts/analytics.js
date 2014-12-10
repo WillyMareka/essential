@@ -1241,6 +1241,16 @@ function setRawUrl(criteria, county, district, facility, survey,
         raw_url = 'analytics/getBemONCReasonRAW/' + criteria + '/' + value + '/' +
           survey + '/' + survey_category + '/' + statistic;
         break;
+
+      case 'delivery_reason':
+        raw_url = 'analytics/getDeliveryReasonRaw/' + criteria + '/' + value + '/' +
+          survey + '/' + survey_category + '/' + statistic;
+        break;
+
+      case 'delivery_response':
+        raw_url = 'analytics/getDeliveryResponseRaw/' + criteria + '/' + value + '/' +
+          survey + '/' + survey_category + '/' + statistic;
+        break;
     }
     return raw_url;
   }
@@ -1483,7 +1493,7 @@ function statisticsHandler(criteria, value, survey, survey_category,
           loadGraph(base_url, 'analytics/getDeliveryServices/' + criteria +
             '/' + value + '/' + survey + '/' + survey_category,
             '#DeliveryReasons');
-          loadGraph(base_url, 'analytics/getDeliveryReason/' + criteria + '/' +
+          loadGraph(base_url, 'analytics/getDeliveryServicesReason/' + criteria + '/' +
             value + '/' + survey + '/' + survey_category,
             '#MainDeliveryReasons');
           loadGraph(base_url, 'analytics/getServices/' + criteria + '/' +
@@ -1863,15 +1873,9 @@ function statisticsHandler(criteria, value, survey, survey_category,
           //   '#HCWfacility_type');
           // loadGraph(base_url, 'analytics/getHCWProfile/hcw/datatable//','#HCW_Profile');
 
-          loadGraph(base_url, 'analytics/getServiceUnit/' +
-            criteria + '/' + value + '/' + survey + '/' + survey_category,
-            '#current_service');
-          loadGraph(base_url, 'analytics/getRetentionAfter/' +
-            criteria + '/' + value + '/' + survey + '/' + survey_category,
-            '#retentiontraining');
-          loadGraph(base_url, 'analytics/getTransferTraining/' +
-            criteria + '/' + value + '/' + survey + '/' + survey_category,
-            '#transfertraining');
+          loadGraph(base_url, 'analytics/getServiceUnit/' +criteria + '/' + value + '/' + survey + '/' + survey_category, '#current_service');
+          loadGraph(base_url, 'analytics/getRetentionAfter/' +criteria + '/' + value + '/' + survey + '/' + survey_category,'#retentiontraining');
+          loadGraph(base_url, 'analytics/getTransferTraining/' +criteria + '/' + value + '/' + survey + '/' + survey_category,'#transfertraining');
 
 
           break;
