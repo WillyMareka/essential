@@ -1961,7 +1961,7 @@ class Analytics extends MY_Controller
         // }
         // echo '<pre>';print_r($results);die;
         $results = $this->arrays->reset($results);
-        echo '<pre>';print_r($results);die;
+       // echo '<pre>';print_r($results);die;
         echo $this->export->generate($results, 'Equipment Statistics for' . ucwords($for) . '(' . $value . ')', $form);
     }
     public function getTreatmentRaw($criteria, $value, $survey, $survey_category, $statistic, $option, $form) {
